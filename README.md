@@ -83,6 +83,20 @@ local TeleportUtil = ServerModules.TeleportUtil
 - Client: ReplicatedStorage.Modules.Client -> UI and client helpers. Exposed by `require(ReplicatedStorage.UsefulFunctionsClient)`.
 - Server: ServerScriptService.UsefulFunctions.Modules.Server -> server-only. Exposed by `require(ServerScriptService.UsefulFunctions.UsefulFunctionsServer)`.
 
+## Testing
+
+This repo includes simple smoke tests for all modules.
+
+- Client tests: `Tests/AllModules.client.lua` (runs as a LocalScript)
+- Server tests: `Tests/AllModules.server.lua` (runs as a Script)
+
+If you sync using the provided `default.project.json`, these are automatically mapped so they run when you press Play in Studio:
+
+- Client test is placed under StarterPlayerScripts
+- Server test is placed under ServerScriptService/Tests
+
+Watch the Output window for [PASS]/[FAIL] lines and a summary for each side. Tests are conservative and avoid external calls (no real teleports/HTTP/DataStores).
+
 ## Modules
 
 Below is a quick tour of the most used utilities. All names are accessed via the bundles:

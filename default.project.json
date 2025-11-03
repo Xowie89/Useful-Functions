@@ -12,6 +12,13 @@
         "Client": { "$className": "Folder", "init": { "$path": "Modules/Client/init.lua" } }
       }
     },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "AllModules.client": { "$className": "LocalScript", "$path": "Tests/AllModules.client.lua" }
+      }
+    },
     "ServerScriptService": {
       "UsefulFunctions": {
         "$className": "Folder",
@@ -23,6 +30,10 @@
             "init": { "$path": "Modules/Server/init.lua" }
           }
         }
+      },
+      "Tests": {
+        "$className": "Folder",
+        "AllModules.server": { "$className": "Script", "$path": "Tests/AllModules.server.lua" }
       }
     }
   }
