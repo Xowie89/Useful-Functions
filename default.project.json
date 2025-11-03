@@ -3,11 +3,26 @@
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
-      "UsefulFunctions": {
-        "$path": "UsefulFunctions.lua"
-      },
+      "UsefulFunctions": { "$path": "UsefulFunctions.lua" },
+      "UsefulFunctionsClient": { "$path": "UsefulFunctionsClient.lua" },
       "Modules": {
-        "$path": "Modules"
+        "$className": "Folder",
+        "init": { "$path": "Modules/init.lua" },
+        "Shared": { "$className": "Folder", "init": { "$path": "Modules/Shared/init.lua" } },
+        "Client": { "$className": "Folder", "init": { "$path": "Modules/Client/init.lua" } }
+      }
+    },
+    "ServerScriptService": {
+      "UsefulFunctions": {
+        "$className": "Folder",
+        "UsefulFunctionsServer": { "$path": "UsefulFunctionsServer.lua" },
+        "Modules": {
+          "$className": "Folder",
+          "Server": {
+            "$className": "Folder",
+            "init": { "$path": "Modules/Server/init.lua" }
+          }
+        }
       }
     }
   }

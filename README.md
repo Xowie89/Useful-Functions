@@ -14,7 +14,6 @@ local Maid = Modules.Maid
 local Debounce = Modules.Debounce
 local Timer = Modules.Timer
 local TweenUtil = Modules.TweenUtil
-local TeleportUtil = Modules.TeleportUtil
 local InstanceUtil = Modules.InstanceUtil
 local TableUtil = Modules.TableUtil
 local StringUtil = Modules.StringUtil
@@ -31,7 +30,7 @@ local Modules = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("
 
 ## Using with Rojo (recommended for GitHub repos)
 
-This repo includes a minimal `default.project.json` so you can sync straight into Studio:
+This repo includes a `default.project.json` that maps shared/client modules to ReplicatedStorage and server-only modules to ServerScriptService:
 
 ```json
 {
@@ -40,7 +39,20 @@ This repo includes a minimal `default.project.json` so you can sync straight int
 		"$className": "DataModel",
 		"ReplicatedStorage": {
 			"UsefulFunctions": { "$path": "UsefulFunctions.lua" },
-			"Modules": { "$path": "Modules" }
+			"UsefulFunctionsClient": { "$path": "UsefulFunctionsClient.lua" },
+			"Modules": {
+				"$className": "Folder",
+				"init": { "$path": "Modules/init.lua" },
+				"Shared": { "$className": "Folder", "init": { "$path": "Modules/Shared/init.lua" }},
+				"Client": { "$className": "Folder", "init": { "$path": "Modules/Client/init.lua" }}
+			}
+		},
+		"ServerScriptService": {
+			"UsefulFunctions": {
+				"$className": "Folder",
+				"UsefulFunctionsServer": { "$path": "UsefulFunctionsServer.lua" },
+				"Modules": { "$className": "Folder", "Server": { "$className": "Folder", "init": { "$path": "Modules/Server/init.lua" }}}
+			}
 		}
 	}
 }
@@ -49,23 +61,40 @@ This repo includes a minimal `default.project.json` so you can sync straight int
 With that mapping, in Studio you can require:
 
 ```lua
+-- Shared (client + shared)
 local Modules = require(game.ReplicatedStorage.UsefulFunctions)
+-- Client-only
+local ClientModules = require(game.ReplicatedStorage.UsefulFunctionsClient)
+-- Server-only
+local ServerModules = require(game.ServerScriptService.UsefulFunctions.UsefulFunctionsServer)
 ```
 
-Alternatively, require modules directly:
+Alternatively, access server/client-only modules via their bundles:
 
 ```lua
-local TeleportUtil = require(path.to.Modules.TeleportUtil)
+-- Server-only example (TeleportUtil)
+local ServerModules = require(game.ServerScriptService.UsefulFunctions.UsefulFunctionsServer)
+local TeleportUtil = ServerModules.TeleportUtil
 ```
+
+## Subfolders: Shared / Client / Server
+
+- Shared: ReplicatedStorage.Modules.Shared -> safe for both server and client. Also exposed by `require(ReplicatedStorage.UsefulFunctions)`.
+- Client: ReplicatedStorage.Modules.Client -> UI and client helpers. Exposed by `require(ReplicatedStorage.UsefulFunctionsClient)`.
+- Server: ServerScriptService.UsefulFunctions.Modules.Server -> server-only. Exposed by `require(ServerScriptService.UsefulFunctions.UsefulFunctionsServer)`.
 
 ## Modules
 
+Below is a quick tour of the most used utilities. All names are accessed via the bundles:
+- Shared: `local Modules = require(ReplicatedStorage.UsefulFunctions)`
+- Client: `local Modules = require(ReplicatedStorage.UsefulFunctionsClient)`
+- Server: `local Modules = require(ServerScriptService.UsefulFunctions.UsefulFunctionsServer)`
+
 ### Signal
-- Lightweight event system wrapping BindableEvent.
-- API: `Signal.new()`, `:Connect`, `:Once`, `:Fire`, `:Wait`, `:Destroy`.
+Lightweight event wrapper.
 
 ```lua
-local signal = Signal.new()
+local signal = Modules.Signal.new()
 local conn = signal:Connect(function(msg) print("got", msg) end)
 signal:Fire("hello")
 conn:Disconnect()
@@ -73,151 +102,179 @@ signal:Destroy()
 ```
 
 ### Maid
-- Cleanup manager for connections, instances, and functions.
-- API: `Maid.new()`, `:GiveTask`, `:Cleanup`, `:Destroy`.
+Cleanup manager for connections, instances, and functions.
 
 ```lua
-local maid = Maid.new()
+local maid = Modules.Maid.new()
 maid:GiveTask(workspace.ChildAdded:Connect(function() end))
 maid:GiveTask(function() print("cleanup") end)
-maid:Cleanup() -- runs & disconnects all
+maid:Cleanup()
 ```
 
 ### Debounce
-- Debounce & throttle helpers.
-- API: `debounce(fn, wait)`, `throttle(fn, interval)`.
+Debounce & throttle helpers.
 
 ```lua
-local onResize = Debounce.debounce(function(w, h) print(w, h) end, 0.25)
+local onResize = Modules.Debounce.debounce(function(w, h) print(w, h) end, 0.25)
 onResize(800, 600)
 ```
 
 ### Timer
-- Simple timers.
-- API: `setTimeout(fn, delay)`, `setInterval(fn, interval)`, `wait(seconds)`.
+Simple `setTimeout` / `setInterval`.
 
 ```lua
-Timer.setTimeout(function() print("once") end, 1)
-local handle = Timer.setInterval(function() print("tick") end, 2)
+Modules.Timer.setTimeout(function() print("once") end, 1)
+local handle = Modules.Timer.setInterval(function() print("tick") end, 2)
 -- handle.Stop()
 ```
 
 ### TweenUtil
-- Create tweens and await them easily.
-- API: `tween`, `tweenAsync`, `sequence`.
+Tween numbers or properties.
 
 ```lua
-local part = workspace.Part
-TweenUtil.tweenAsync(part, TweenInfo.new(1, Enum.EasingStyle.Quad), {Transparency = 1})
+Modules.TweenUtil.tween(0, 1, TweenInfo.new(0.5), function(v)
+    print(string.format("progress %.2f", v))
+end)
+
+local gui = Instance.new("Frame")
+gui.Size = UDim2.fromScale(0, 0)
+Modules.TweenUtil.tween(gui, { Size = UDim2.fromScale(1, 1) }, TweenInfo.new(0.25))
 ```
 
-### TeleportUtil
-- In-server repositioning and cross-place/server teleports with retries.
-- Server-side recommended for TeleportService.
+### TeleportUtil (server)
+Cross-place and in-server teleports with retries/backoff.
 
 ```lua
--- same-server move
-TeleportUtil.teleportInServer(player, workspace.SpawnLocation, { keepOrientation = true, offset = Vector3.new(0, 2, 0) })
+local ServerModules = require(ServerScriptService.UsefulFunctions.UsefulFunctionsServer)
+local TeleportUtil = ServerModules.TeleportUtil
 
--- cross-place
+TeleportUtil.teleportInServer(player, workspace.SpawnLocation, { keepOrientation = true, offset = Vector3.new(0,2,0) })
 local ok, err = TeleportUtil.teleportToPlace(1234567890, player, { from = game.PlaceId })
-if not ok then warn("Teleport failed", err) end
+```
+
+### NotificationQueue (client)
+Queued and stacked toasts.
+
+```lua
+local nq = Modules.NotificationQueue.new({ maxVisible = 3 })
+nq:enqueue("You picked up a coin")
+nq:setPosition(UDim2.new(0.5, 0, 0.12, 0), Vector2.new(0.5, 0))
+```
+
+### ModalUtil (client)
+Promise-based confirms/prompts.
+
+```lua
+Modules.ModalUtil.confirm({ title = "Confirm", message = "Start?", buttons = {"Yes","No"} }):andThen(function(answer)
+    print("answer", answer)
+end)
+```
+
+### CooldownUtil
+Per-key cooldown tracker (client or server).
+
+```lua
+local cd = Modules.CooldownUtil.new(2)
+if not cd:use("dash") then
+    print("dash ready in", string.format("%.2f", cd:timeRemaining("dash")), "s")
+end
+```
+
+### ClientRateLimiter (client)
+Advisory client-side limiter (always validate on server too).
+
+```lua
+local rl = Modules.ClientRateLimiter.new(5, 2)
+local ok, remaining = rl:allow("fire")
 ```
 
 ### InstanceUtil
-- Build/fetch/wait/destroy helpers for Instances.
+Build/fetch/wait/destroy helpers.
 
 ```lua
-local folder = InstanceUtil.getOrCreate(workspace, "Folder", "Stuff")
-local part = InstanceUtil.create("Part", { Name = "P", Parent = folder, Anchored = true })
+local folder = Modules.InstanceUtil.getOrCreate(workspace, "Folder", "Stuff")
+local part = Modules.InstanceUtil.create("Part", { Name = "P", Parent = folder, Anchored = true })
 ```
 
 ### TableUtil
 
 ```lua
+Modules.TableUtil.shallowEqual({a=1},{a=1}) -- true
+for k,v in Modules.TableUtil.pairsByKeys({b=2, a=1}) do print(k,v) end
 ```
 
 ### StringUtil
-- Trimming, splitting, joining, casing, padding, slugify, thousands formatting.
+Trim, split, join, slugify, etc.
 
 ```lua
-StringUtil.trim("  hi  ") -- "hi"
-StringUtil.slugify("Hello World!!") -- "hello-world"
+Modules.StringUtil.trim("  hi  ") -- "hi"
+Modules.StringUtil.slugify("Hello World!!") -- "hello-world"
 ```
 
 ### MathUtil
-### RaycastUtil
-- Raycast helpers for common operations.
 
 ```lua
-local params = RaycastUtil.params({character}, "Exclude")
-RaycastUtil.ignoreCharacter(params, player)
-local hit = RaycastUtil.raycastFromTo(Vector3.new(0,10,0), Vector3.new(0,0,0), params)
+Modules.MathUtil.remap(5, 0, 10, 0, 1, true) -- 0.5
+```
+
+### RaycastUtil
+
+```lua
+local params = Modules.RaycastUtil.params({character}, "Exclude")
+Modules.RaycastUtil.ignoreCharacter(params, player)
+local hit = Modules.RaycastUtil.raycastFromTo(Vector3.new(0,10,0), Vector3.new(0,0,0), params)
 ```
 
 ### ColorUtil
-- Color3 conversions and adjustments.
 
 ```lua
-local c = ColorUtil.fromHex("#FFAA00")
-local lighter = ColorUtil.lighten(c, 0.2)
-print(ColorUtil.toHex(lighter))
+local c = Modules.ColorUtil.fromHex("#FFAA00")
+local lighter = Modules.ColorUtil.lighten(c, 0.2)
+print(Modules.ColorUtil.toHex(lighter))
 ```
 
 ### HttpUtil (server)
-- RequestAsync wrapper with retries and JSON helpers.
 
 ```lua
-local ok, res, err = HttpUtil.get("https://httpbin.org/get", nil, { retries = 2 })
-if ok then print(res.StatusCode, res.Body) else warn(err) end
+local ok, res, err = Modules.HttpUtil.get("https://httpbin.org/get", nil, { retries = 2 })
 ```
 
 ### DataStoreUtil (server)
-- DataStore helpers with retries and request budget waits.
 
 ```lua
-local store = DataStoreUtil.getStore("PlayerData")
-local ok, data = DataStoreUtil.get(store, player.UserId)
-local ok2, newCoins = DataStoreUtil.increment(store, player.UserId..":coins", 1)
+local store = Modules.DataStoreUtil.getStore("PlayerData")
+local ok, data = Modules.DataStoreUtil.get(store, player.UserId)
 ```
 
 ### CollectionUtil
-- Tag utilities using CollectionService.
 
 ```lua
-CollectionUtil.addTag(part, "Enemy")
-local conn = CollectionUtil.onAdded("Enemy", function(inst) print("enemy tagged:", inst) end)
+Modules.CollectionUtil.addTag(part, "Enemy")
+local conn = Modules.CollectionUtil.onAdded("Enemy", function(inst) print("enemy tagged:", inst) end)
 ```
 
 ### TimeUtil
-- Duration and ISO timestamp formatting.
-### SoundUtil
-- Play and preload sounds with optional fades and a stop/destroy handle.
 
 ```lua
-local sound, handle = Modules.SoundUtil.play("rbxassetid://123456", {
-	parent = workspace,
-	volume = 0.7,
-	fadeIn = 0.5,
-	fadeOut = 0.25,
-	destroyOnEnd = true,
-})
--- Later: handle.Stop() or handle.FadeOut(0.25)
+Modules.TimeUtil.formatDuration(3671) -- "01:01:11"
+Modules.TimeUtil.iso8601() -- e.g. "2025-11-03T12:34:56Z"
+```
+
+### SoundUtil
+
+```lua
+local sound, handle = Modules.SoundUtil.play("rbxassetid://123456", { parent = workspace, volume = 0.7 })
+-- handle.Stop(); handle.FadeOut(0.25)
 ```
 
 ### CameraUtil (client)
-- Set camera subject, tween to CFrame, simple shake.
 
 ```lua
-local CameraUtil = Modules.CameraUtil
-CameraUtil.setSubject(nil) -- manual control
-CameraUtil.tweenTo(CFrame.new(0,20,0), TweenInfo.new(1))
-local shake = CameraUtil.shake(0.6, 0.2, 15)
--- shake.Stop()
+Modules.CameraUtil.setSubject(nil)
+Modules.CameraUtil.tweenTo(CFrame.new(0,20,0), TweenInfo.new(1))
 ```
 
 ### CFrameUtil
-- Utility functions for CFrame math: lookAt, yaw/pitch/roll conversions, rotateAround, clampYaw.
 
 ```lua
 local cf = Modules.CFrameUtil.lookAt(Vector3.new(0,5,0), Vector3.new(0,0,0))
@@ -225,103 +282,69 @@ local clamped = Modules.CFrameUtil.clampYaw(cf, -math.rad(90), math.rad(90))
 ```
 
 ### RandomUtil
-- RNG wrapper: integers, numbers, choice, shuffle, sample, weighted, bag draws.
 
 ```lua
 local RNG = Modules.RandomUtil.new(42)
-local nums = RNG:sample({1,2,3,4,5}, 3, true)
 local pick = RNG:weighted({ {item="A", weight=1}, {item="B", weight=3} })
 ```
 
 ### RateLimiter
-- Token-bucket limiter per key (capacity + refill rate per second).
+
+```lua
+local limiter = Modules.RateLimiter.new(5, 2)
+local ok, remaining = limiter:allow("player:"..player.UserId)
+```
+
 ### NotificationUtil (client)
-- Simple toast notifications on the client.
 
 ```lua
 Modules.NotificationUtil.show("Welcome!", { duration = 3, stroke = true })
 ```
 
 ### StateMachine
-- Tiny FSM with onEnter/onExit hooks and a stateChanged signal.
 
 ```lua
 local fsm = Modules.StateMachine.new("Idle")
-fsm:addState("Idle", { onExit = function(next) print("exit Idle ->", next) end })
-fsm:addState("Run", { onEnter = function(prev) print("enter Run from", prev) end })
-fsm.stateChanged:Connect(function(current, previous) print("state:", previous, "->", current) end)
+fsm:addState("Idle", {})
+fsm:addState("Run", {})
 fsm:transition("Run")
 ```
 
 ### ProgressBar (client)
-- Simple progress bar component.
 
 ```lua
 local bar = Modules.ProgressBar.create()
 bar:SetText("Loading...")
 bar:SetProgress(0)
-for i = 1, 100 do
-	bar:SetProgress(i/100, 0.02)
-	task.wait(0.02)
-end
-bar:SetText("Done")
 ```
 
-```lua
-local limiter = Modules.RateLimiter.new(5, 2) -- capacity 5, refill 2 tokens/sec
-local ok, remaining = limiter:allow("player:"..player.UserId)
-if not ok then return end -- deny action
-```
 ### PromiseUtil
-- Lightweight Promises and helpers (resolve/reject, andThen/catch/finally, all, race, delay, timeout, retry).
 
 ```lua
 local Promise = Modules.PromiseUtil
 Promise.retry(function()
-	-- work that may fail
-	if math.random() < 0.5 then error("flaky") end
-	return "ok"
-end, 3, 0.5):andThen(function(res)
-	print("res", res)
-end):catch(function(err)
-	warn("failed", err)
-end)
+    if math.random() < 0.5 then error("flaky") end
+    return "ok"
+end, 3, 0.5):andThen(print):catch(warn)
 ```
 
 ### PlayerUtil
-- Safe character/humanoid/HRP utilities.
 
 ```lua
-local char = PlayerUtil.waitForCharacter(player, 5)
-local hum = PlayerUtil.waitForHumanoid(player, 5)
-if hum and PlayerUtil.isAlive(hum) then
-	print("alive")
-end
+local char = Modules.PlayerUtil.waitForCharacter(player, 5)
 ```
 
 ### LeaderstatsUtil (server)
-- Create and manage leaderstats quickly; optional persistence with DataStoreUtil.
 
 ```lua
-local store = DataStoreUtil.getStore("Leaderstats")
-LeaderstatsUtil.bindAutoSetup(game:GetService("Players"))
-LeaderstatsUtil.addInt(player, "Coins", 0)
-LeaderstatsUtil.increment(player, "Coins", 5)
-
--- Optional persistence
-local hooks = LeaderstatsUtil.attachPersistence(store, function(p) return "ls:"..p.UserId end)
-hooks.load(player)
-hooks.save(player)
+Modules.LeaderstatsUtil.bindAutoSetup(game:GetService("Players"))
 ```
 
-```lua
-TimeUtil.formatDuration(3671) -- "01:01:11"
-TimeUtil.iso8601() -- e.g. "2025-11-03T12:34:56Z"
-```
-- Common math helpers: `clamp`, `lerp`, `remap`, rounding, approx, random, weighted choice.
+### MatchmakingUtil (server)
 
 ```lua
-MathUtil.remap(5, 0, 10, 0, 1, true) -- 0.5
+local mm = Modules.MatchmakingUtil.new(1234567890, 5)
+mm:onMatched(function(players) print("matched", #players) end)
 ```
 
 ## Folder placement

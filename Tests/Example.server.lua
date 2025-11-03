@@ -6,7 +6,8 @@ local Players = game:GetService("Players")
 
 -- Assume you've put the Modules folder in ReplicatedStorage
 -- Recommended: require top-level UsefulFunctions ModuleScript next to Modules
-local Modules = require(ReplicatedStorage:WaitForChild("UsefulFunctions"))
+local ServerScriptService = game:GetService("ServerScriptService")
+local Modules = require(ServerScriptService:WaitForChild("UsefulFunctions"):WaitForChild("UsefulFunctionsServer"))
 
 local Promise = Modules.PromiseUtil
 local LeaderstatsUtil = Modules.LeaderstatsUtil
@@ -30,3 +31,16 @@ end, 5, 0.25):andThen(function(msg)
 end):catch(function(err)
 	warn("Promise failed:", err)
 end)
+
+-- MatchmakingUtil demo (replace PLACE_ID with your destination place id if testing)
+local MatchmakingUtil = Modules.MatchmakingUtil
+local PLACE_ID = 0 -- set to a valid place id in your experience to test
+if PLACE_ID ~= 0 then
+	local mm = MatchmakingUtil.new(PLACE_ID, 2, { retries = 2, backoff = 1 })
+	mm:onMatched(function(players)
+		print("Matched party:", table.concat(table.create(#players, "*"), ","), "size", #players)
+	end)
+	Players.PlayerAdded:Connect(function(p)
+		mm:enqueue(p)
+	end)
+end
