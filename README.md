@@ -191,6 +191,87 @@ local conn = CollectionUtil.onAdded("Enemy", function(inst) print("enemy tagged:
 
 ### TimeUtil
 - Duration and ISO timestamp formatting.
+### SoundUtil
+- Play and preload sounds with optional fades and a stop/destroy handle.
+
+```lua
+local sound, handle = Modules.SoundUtil.play("rbxassetid://123456", {
+	parent = workspace,
+	volume = 0.7,
+	fadeIn = 0.5,
+	fadeOut = 0.25,
+	destroyOnEnd = true,
+})
+-- Later: handle.Stop() or handle.FadeOut(0.25)
+```
+
+### CameraUtil (client)
+- Set camera subject, tween to CFrame, simple shake.
+
+```lua
+local CameraUtil = Modules.CameraUtil
+CameraUtil.setSubject(nil) -- manual control
+CameraUtil.tweenTo(CFrame.new(0,20,0), TweenInfo.new(1))
+local shake = CameraUtil.shake(0.6, 0.2, 15)
+-- shake.Stop()
+```
+
+### CFrameUtil
+- Utility functions for CFrame math: lookAt, yaw/pitch/roll conversions, rotateAround, clampYaw.
+
+```lua
+local cf = Modules.CFrameUtil.lookAt(Vector3.new(0,5,0), Vector3.new(0,0,0))
+local clamped = Modules.CFrameUtil.clampYaw(cf, -math.rad(90), math.rad(90))
+```
+
+### RandomUtil
+- RNG wrapper: integers, numbers, choice, shuffle, sample, weighted, bag draws.
+
+```lua
+local RNG = Modules.RandomUtil.new(42)
+local nums = RNG:sample({1,2,3,4,5}, 3, true)
+local pick = RNG:weighted({ {item="A", weight=1}, {item="B", weight=3} })
+```
+
+### RateLimiter
+- Token-bucket limiter per key (capacity + refill rate per second).
+### NotificationUtil (client)
+- Simple toast notifications on the client.
+
+```lua
+Modules.NotificationUtil.show("Welcome!", { duration = 3, stroke = true })
+```
+
+### StateMachine
+- Tiny FSM with onEnter/onExit hooks and a stateChanged signal.
+
+```lua
+local fsm = Modules.StateMachine.new("Idle")
+fsm:addState("Idle", { onExit = function(next) print("exit Idle ->", next) end })
+fsm:addState("Run", { onEnter = function(prev) print("enter Run from", prev) end })
+fsm.stateChanged:Connect(function(current, previous) print("state:", previous, "->", current) end)
+fsm:transition("Run")
+```
+
+### ProgressBar (client)
+- Simple progress bar component.
+
+```lua
+local bar = Modules.ProgressBar.create()
+bar:SetText("Loading...")
+bar:SetProgress(0)
+for i = 1, 100 do
+	bar:SetProgress(i/100, 0.02)
+	task.wait(0.02)
+end
+bar:SetText("Done")
+```
+
+```lua
+local limiter = Modules.RateLimiter.new(5, 2) -- capacity 5, refill 2 tokens/sec
+local ok, remaining = limiter:allow("player:"..player.UserId)
+if not ok then return end -- deny action
+```
 ### PromiseUtil
 - Lightweight Promises and helpers (resolve/reject, andThen/catch/finally, all, race, delay, timeout, retry).
 

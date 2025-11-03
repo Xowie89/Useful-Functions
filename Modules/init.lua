@@ -26,4 +26,12 @@ return {
 	PromiseUtil = require(Modules.PromiseUtil),
 	PlayerUtil = require(Modules.PlayerUtil),
 	LeaderstatsUtil = require(Modules.LeaderstatsUtil),
+	SoundUtil = require(Modules.SoundUtil),
+	CameraUtil = require(Modules.CameraUtil),
+	CFrameUtil = require(Modules.CFrameUtil),
+	RandomUtil = require(Modules.RandomUtil),
+	RateLimiter = require(Modules.RateLimiter),
+	NotificationUtil = require(Modules.NotificationUtil),
+	StateMachine = require(Modules.StateMachine),
+	ProgressBar = require(Modules.ProgressBar),
 }
