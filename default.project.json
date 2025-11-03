@@ -1,0 +1,14 @@
+{
+  "name": "UsefulFunctions",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "UsefulFunctions": {
+        "$path": "UsefulFunctions.lua"
+      },
+      "Modules": {
+        "$path": "Modules"
+      }
+    }
+  }
+}
