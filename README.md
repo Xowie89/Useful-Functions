@@ -63,7 +63,6 @@ Mv.setHipHeight(player, 2)
 -- Temporary boost (auto-restores after duration)
 local ok, restore = Mv.tempWalkSpeed(player, 1.5, { mode = "mul", duration = 5 })
 -- Optionally: restore() early
-```
 
 ### CharacterHealthUtil (server)
 
