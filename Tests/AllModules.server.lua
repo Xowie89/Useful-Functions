@@ -135,6 +135,137 @@ runTest("StateMachine", function()
 	fsm:transition("Run")
 end)
 
+-- New shared modules
+runTest("VectorUtil", function()
+	local a = Vector3.new(1, 0, 0)
+	local b = Vector3.new(0, 0, 1)
+	local ang = Modules.VectorUtil.angleBetween(a, b)
+	assert(math.abs(ang - math.pi/2) < 1e-4)
+	local clamped = Modules.VectorUtil.clampMagnitude(Vector3.new(10,0,0), 2)
+	assert(math.abs(clamped.Magnitude - 2) < 1e-4)
+end)
+
+runTest("FormatUtil", function()
+	assert(Modules.FormatUtil.withCommas(1234567) == "1,234,567")
+	local abbr = Modules.FormatUtil.abbreviate(15300, 1)
+	assert(abbr:find("k"))
+	assert(Modules.FormatUtil.percent(0.125, 1) == "12.5%")
+	assert(Modules.FormatUtil.bytes(1536):find("KB"))
+end)
+
+runTest("UUIDUtil", function()
+	local g = Modules.UUIDUtil.guid()
+	assert(type(g) == "string" and #g > 10)
+	local s = Modules.UUIDUtil.randomString(8)
+	assert(#s == 8)
+	local short = Modules.UUIDUtil.shortId(12)
+	assert(#short == 12)
+end)
+
+runTest("CacheUtil", function()
+	local cache = Modules.CacheUtil.new(60, 10)
+	local n = 0
+	local v1 = cache:getOrCompute("a", function() n += 1 return 5 end)
+	local v2 = cache:getOrCompute("a", function() n += 1 return 6 end)
+	assert(v1 == 5 and v2 == 5 and n == 1)
+end)
+
+runTest("Observable", function()
+	local o = Modules.Observable.new(1)
+	local seen
+	local conn = o.Changed:Connect(function(v) seen = v end)
+	o:set(2)
+	task.wait()
+	assert(seen == 2 and o:get() == 2)
+	conn:Disconnect()
+	o:Destroy()
+end)
+
+-- Batch 2 shared modules
+runTest("GeometryUtil", function()
+	local minV, maxV = Modules.GeometryUtil.aabbFromPoints({ Vector3.new(0,0,0), Vector3.new(2,3,4) })
+	assert(minV and maxV and maxV.X == 2 and maxV.Y == 3 and maxV.Z == 4)
+	local cf, size = Modules.GeometryUtil.aabbToCFrameSize(minV, maxV)
+	assert(typeof(cf) == "CFrame" and typeof(size) == "Vector3")
+	local hit = Modules.GeometryUtil.rayPlaneIntersection(Vector3.new(0,0,0), Vector3.new(0,1,0), Vector3.new(0,5,0), Vector3.new(0,1,0))
+	assert(hit and math.abs(hit.Y - 5) < 1e-4)
+	local cp = Modules.GeometryUtil.closestPointOnSegment(Vector3.new(0,0,0), Vector3.new(10,0,0), Vector3.new(5,5,0))
+	assert(typeof(cp) == "Vector3")
+end)
+
+runTest("EasingUtil", function()
+	local v1 = Modules.EasingUtil.quadIn(0.5)
+	local v2 = Modules.EasingUtil.quadOut(0.5)
+	local v3 = Modules.EasingUtil.sineInOut(0.5)
+	assert(v1 < 0.5 and v2 > 0.5 and math.abs(v3 - 0.5) < 1e-6)
+end)
+
+runTest("DeepTableUtil", function()
+	local a = { x = { y = 1 }, z = 2 }
+	local b = { x = { y = 3, k = 4 } }
+	local m = Modules.DeepTableUtil.deepMerge(Modules.DeepTableUtil.deepClone(a), b)
+	assert(m.x.y == 3 and m.x.k == 4 and m.z == 2)
+	local v = Modules.DeepTableUtil.getIn(m, {"x", "k"})
+	assert(v == 4)
+	local m2 = Modules.DeepTableUtil.setIn(m, {"x","y"}, 10)
+	assert(m2.x.y == 10 and m.x.y == 3)
+	assert(Modules.DeepTableUtil.equalsDeep(m2, m2))
+end)
+
+runTest("StatUtil", function()
+	local v = Modules.StatUtil.ema(nil, 10, 0.5)
+	v = Modules.StatUtil.ema(v, 0, 0.5)
+	assert(v and v > 0 and v < 10)
+	local r = Modules.StatUtil.Running(); r:push(1); r:push(3)
+	assert(r:mean() == 2 and r.min == 1 and r.max == 3)
+end)
+
+runTest("HashUtil", function()
+	local h1 = Modules.HashUtil.stringHash("abc")
+	local h2 = Modules.HashUtil.stableHash({ a = 1, b = 2 })
+	assert(type(h1) == "number" and type(h2) == "number")
+end)
+
+-- Data helpers
+runTest("LRUCache", function()
+	local LRU = Modules.LRUCache
+	local c = LRU.new(2)
+	c:set("a", 1)
+	c:set("b", 2)
+	assert(c:get("a") == 1)
+	c:set("c", 3) -- evict b
+	assert(c:get("b") == nil and c:get("c") == 3)
+end)
+
+runTest("Memoize", function()
+	local calls = 0
+	local f = function(x, y) calls += 1; return x + y end
+	local mf = select(1, Modules.Memoize.wrap(f, { capacity = 8 }))
+	assert(mf(1,2) == 3 and mf(1,2) == 3 and calls == 1)
+end)
+
+runTest("EventBus", function()
+	local bus = Modules.EventBus.new()
+	local seen
+	local conn = bus:subscribe("tick", function(v) seen = v end)
+	bus:publish("tick", 42)
+	task.wait()
+	assert(seen == 42)
+	conn:Disconnect(); bus:Destroy()
+end)
+
+runTest("Deque", function()
+	local dq = Modules.Deque.new()
+	dq:pushLeft(1); dq:pushRight(2)
+	assert(dq:popLeft() == 1 and dq:popRight() == 2)
+end)
+
+runTest("PriorityQueue", function()
+	local pq = Modules.PriorityQueue.new()
+	pq:push(5); pq:push(1); pq:push(3)
+	assert(pq:pop() == 1 and pq:pop() == 3 and pq:pop() == 5)
+end)
+
 runTest("RaycastUtil (params only)", function()
 	local params = Modules.RaycastUtil.params({}, "Exclude")
 	assert(typeof(params) == "RaycastParams")
@@ -176,6 +307,75 @@ end)
 runTest("MatchmakingUtil (server)", function()
 	local mm = Modules.MatchmakingUtil.new(0, 2, { retries = 0 })
 	assert(mm ~= nil)
+end)
+
+runTest("MessagingServiceUtil (server)", function()
+	assert(type(Modules.MessagingServiceUtil) == "table")
+	assert(type(Modules.MessagingServiceUtil.publish) == "function")
+	assert(type(Modules.MessagingServiceUtil.subscribe) == "function")
+end)
+
+runTest("MemoryStoreUtil (server)", function()
+	assert(type(Modules.MemoryStoreUtil) == "table")
+	local q = Modules.MemoryStoreUtil.queue("UF_TestQueue")
+	assert(type(q.enqueue) == "function")
+	local m = Modules.MemoryStoreUtil.map("UF_TestMap")
+	assert(type(m.increment) == "function")
+end)
+
+runTest("BadgeUtil (server)", function()
+	assert(type(Modules.BadgeUtil) == "table")
+	assert(type(Modules.BadgeUtil.hasBadge) == "function")
+end)
+
+runTest("GroupUtil (server)", function()
+	assert(type(Modules.GroupUtil) == "table")
+	assert(type(Modules.GroupUtil.getRankInGroup) == "function")
+end)
+
+runTest("MarketplaceUtil (server)", function()
+	assert(type(Modules.MarketplaceUtil) == "table")
+	assert(type(Modules.MarketplaceUtil.ownsGamePass) == "function")
+end)
+
+runTest("PolicyUtil (server)", function()
+	assert(type(Modules.PolicyUtil) == "table")
+	assert(type(Modules.PolicyUtil.getPolicy) == "function")
+end)
+
+runTest("BanUtil (server)", function()
+	assert(type(Modules.BanUtil) == "table")
+	assert(type(Modules.BanUtil.ban) == "function")
+end)
+
+runTest("WebhookUtil (server)", function()
+	assert(type(Modules.WebhookUtil) == "table")
+	assert(type(Modules.WebhookUtil.postJson) == "function")
+end)
+
+runTest("ChatFilterUtil (server)", function()
+	assert(type(Modules.ChatFilterUtil) == "table")
+	assert(type(Modules.ChatFilterUtil.filterForBroadcast) == "function")
+end)
+
+runTest("AccessControlUtil (server)", function()
+	assert(type(Modules.AccessControlUtil) == "table")
+	local ok = Modules.AccessControlUtil.canUseFeature
+	assert(type(ok) == "function")
+end)
+
+runTest("JobScheduler (server)", function()
+	assert(type(Modules.JobScheduler) == "table")
+	local s = Modules.JobScheduler.new("UF_TestJobs", { poll = 0.01 })
+	assert(s and s.enqueue and s.startWorker and s.stopWorker)
+	s:stopWorker()
+end)
+
+runTest("AuditLogUtil (server)", function()
+	assert(type(Modules.AuditLogUtil) == "table")
+	local logger = Modules.AuditLogUtil.new(nil)
+	logger:log("test", { a = 1 })
+	logger:start(); logger:stop()
 end)
 
 print(string.format("AllModules.server: %d passed, %d failed (total %d)", passed, failed, total))
