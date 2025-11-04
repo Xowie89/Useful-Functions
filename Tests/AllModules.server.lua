@@ -394,6 +394,63 @@ runTest("CharacterScaleUtil (server)", function()
 	model:Destroy()
 end)
 
+runTest("CharacterMovementUtil (server)", function()
+	assert(type(Modules.CharacterMovementUtil) == "table")
+	local model = Instance.new("Model")
+	local humanoid = Instance.new("Humanoid")
+	humanoid.Parent = model
+	local ok = Modules.CharacterMovementUtil.setWalkSpeed(humanoid, 24)
+	assert(ok and math.abs(humanoid.WalkSpeed - 24) < 1e-6)
+	Modules.CharacterMovementUtil.setJumpPower(humanoid, 60)
+	assert(humanoid.UseJumpPower and humanoid.JumpPower == 60)
+	local ok2, restore = Modules.CharacterMovementUtil.tempWalkSpeed(humanoid, 12, { mode = "add" })
+	assert(ok2 and type(restore) == "function")
+	restore()
+	model:Destroy()
+end)
+
+runTest("CharacterHealthUtil (server)", function()
+	assert(type(Modules.CharacterHealthUtil) == "table")
+	local model = Instance.new("Model")
+	local humanoid = Instance.new("Humanoid")
+	humanoid.Parent = model
+	Modules.CharacterHealthUtil.setMaxHealth(humanoid, 200)
+	assert(humanoid.MaxHealth == 200)
+	Modules.CharacterHealthUtil.damage(humanoid, 50)
+	assert(humanoid.Health == 150)
+	local ok, disable = Modules.CharacterHealthUtil.setInvulnerable(humanoid, true)
+	assert(ok and type(disable) == "function")
+	Modules.CharacterHealthUtil.damage(humanoid, 50)
+	-- damage should be negated
+	assert(humanoid.Health == 150)
+	disable()
+	model:Destroy()
+end)
+
+runTest("CharacterVisibilityUtil (server)", function()
+	assert(type(Modules.CharacterVisibilityUtil) == "table")
+	local model = Instance.new("Model")
+	local humanoid = Instance.new("Humanoid")
+	local part = Instance.new("Part")
+	part.Parent = model
+	humanoid.Parent = model
+	local ok = Modules.CharacterVisibilityUtil.setInvisible(model, true)
+	assert(ok and part.Transparency == 1)
+	Modules.CharacterVisibilityUtil.setInvisible(model, false)
+	assert(part.Transparency == 0)
+	model:Destroy()
+end)
+
+runTest("CharacterAppearanceUtil (server)", function()
+	assert(type(Modules.CharacterAppearanceUtil) == "table")
+	local model = Instance.new("Model")
+	local humanoid = Instance.new("Humanoid")
+	humanoid.Parent = model
+	local bc = Modules.CharacterAppearanceUtil.setBodyColors(model, { Head = BrickColor.new("Bright yellow") })
+	assert(bc and bc:IsA("BodyColors"))
+	model:Destroy()
+end)
+
 print(string.format("AllModules.server: %d passed, %d failed (total %d)", passed, failed, total))
 if failed > 0 then
 	warn("Some server tests failed.")

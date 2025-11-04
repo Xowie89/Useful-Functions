@@ -113,7 +113,11 @@
             "JobScheduler": { "$path": "Modules/Server/JobScheduler.lua" },
             "AuditLogUtil": { "$path": "Modules/Server/AuditLogUtil.lua" }
             ,
-            "CharacterScaleUtil": { "$path": "Modules/Server/CharacterScaleUtil.lua" }
+            "CharacterScaleUtil": { "$path": "Modules/Server/CharacterScaleUtil.lua" },
+            "CharacterMovementUtil": { "$path": "Modules/Server/CharacterMovementUtil.lua" },
+            "CharacterAppearanceUtil": { "$path": "Modules/Server/CharacterAppearanceUtil.lua" },
+            "CharacterVisibilityUtil": { "$path": "Modules/Server/CharacterVisibilityUtil.lua" },
+            "CharacterHealthUtil": { "$path": "Modules/Server/CharacterHealthUtil.lua" }
           }
         }
       },

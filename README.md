@@ -857,6 +857,76 @@ local s = CS.getScales(player)
 CS.reset(player)
 ```
 
+### CharacterMovementUtil (server)
+
+Adjust humanoid movement properties and apply temporary boosts.
+
+```lua
+local Mv = ServerModules.CharacterMovementUtil
+
+-- Direct setters
+Mv.setWalkSpeed(player, 20)
+Mv.setJumpPower(player, 60)    -- switches to JumpPower mode
+Mv.setJumpHeight(player, 8)    -- switches to JumpHeight mode
+Mv.setAutoRotate(player, false)
+Mv.setHipHeight(player, 2)
+
+-- Temporary boost (auto-restores after duration)
+local ok, restore = Mv.tempWalkSpeed(player, 1.5, { mode = "mul", duration = 5 })
+-- Optionally: restore() early
+```
+
+### CharacterHealthUtil (server)
+
+Manipulate health and toggle simple invulnerability.
+
+```lua
+local HP = ServerModules.CharacterHealthUtil
+HP.setMaxHealth(player, 200)
+HP.heal(player, 25)
+HP.damage(player, 10)
+
+-- Make invulnerable for 3 seconds
+local ok, disable = HP.setInvulnerable(player, true, { duration = 3 })
+-- Or disable() early
+```
+
+### CharacterVisibilityUtil (server)
+
+Make characters invisible/visible or non-colliding (ghost mode).
+
+```lua
+local Vis = ServerModules.CharacterVisibilityUtil
+Vis.setInvisible(player, true)              -- fully invisible (Transparency=1)
+Vis.setInvisible(player, false)             -- visible again
+Vis.setGhostMode(player, true)              -- non-colliding but visible
+Vis.setTransparency(player, 0.5, { nonCollide = true })
+```
+
+### CharacterAppearanceUtil (server)
+
+Apply outfits and tweak colors/accessories.
+
+```lua
+local App = ServerModules.CharacterAppearanceUtil
+
+-- Apply the player's Roblox outfit (or another user)
+App.applyUserOutfit(player, player.UserId)
+
+-- Apply outfit by outfit id
+App.applyOutfitId(player, 1234567890)
+
+-- Set classic body colors (BrickColor or Color3)
+App.setBodyColors(player, {
+	Head = BrickColor.new("Bright yellow"),
+	Torso = Color3.fromRGB(255, 204, 153),
+})
+
+-- Add/remove accessories (when you already have an Accessory instance)
+-- App.addAccessory(player, accessory)
+-- App.removeAccessories(player, function(acc) return acc.Name == "Hat" end)
+```
+
 ## Folder placement
 - ServerScriptService: best for server-only utilities (TeleportUtil usage).
 - ReplicatedStorage: for shared modules (most utilities).

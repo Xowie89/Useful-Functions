@@ -31,5 +31,9 @@ M.AccessControlUtil = require(script.Parent.AccessControlUtil)
 M.JobScheduler = require(script.Parent.JobScheduler)
 M.AuditLogUtil = require(script.Parent.AuditLogUtil)
 M.CharacterScaleUtil = require(script.Parent.CharacterScaleUtil)
+M.CharacterMovementUtil = require(script.Parent.CharacterMovementUtil)
+M.CharacterAppearanceUtil = require(script.Parent.CharacterAppearanceUtil)
+M.CharacterVisibilityUtil = require(script.Parent.CharacterVisibilityUtil)
+M.CharacterHealthUtil = require(script.Parent.CharacterHealthUtil)
 
 return M
