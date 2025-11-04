@@ -108,10 +108,12 @@ Tip: In Studio, individual modules are also mapped under ReplicatedStorage/Serve
 
 ---
 
+<a id="examples"></a>
 ## Examples
 
 Quick, copy-pasteable snippets showing typical use. Adjust paths to your game structure if needed.
 
+<a id="shared-examples"></a>
 ### Shared examples
 
 ```lua
@@ -140,6 +142,7 @@ local result = cache:getOrCompute("expensive", function()
 end, 120) -- per-call TTL 120s
 ```
 
+<a id="client-examples"></a>
 ### Client examples
 
 ```lua
@@ -167,6 +170,7 @@ if res then
 end
 ```
 
+<a id="server-examples"></a>
 ### Server examples
 
 ```lua
@@ -215,6 +219,7 @@ end)
 Server.MessagingServiceUtil.publish("uf:ping", { hello = true })
 ```
 
+<a id="shared-per-module-examples"></a>
 ## Shared per-module examples
 
 Below are minimal examples for each Shared module. Require once:
@@ -567,6 +572,7 @@ pq:push(3); pq:push(1); pq:push(2)
 print(pq:pop())
 ```
 
+<a id="client-per-module-examples"></a>
 ## Client per-module examples
 
 Require once on the client:
@@ -764,6 +770,7 @@ slider.OnChanged:Connect(function(v) print("value:", v) end)
 slider:SetValue(0.75)
 ```
 
+<a id="server-per-module-examples"></a>
 ## Server per-module examples
 
 Require once on the server:
@@ -964,10 +971,12 @@ game.Players.PlayerAdded:Connect(function(p)
 end)
 ```
 
+<a id="shared-modules"></a>
 ## Shared modules
 
 All available from the Shared bundle (`Modules.X`).
 
+<a id="signal--lightweight-events"></a>
 ### Signal — lightweight events
 - new() -> Signal
 - Signal:Connect(fn: (...any) -> ()) -> RBXScriptConnection
@@ -977,6 +986,7 @@ All available from the Shared bundle (`Modules.X`).
 - Signal:Destroy()
 - Example: `local sig = Modules.Signal.new(); local c = sig:Connect(print); sig:Fire("hi")`
 
+<a id="maid--cleanup-aggregator"></a>
 ### Maid — cleanup aggregator
 - new() -> Maid
 - Maid:GiveTask(task: Instance|RBXScriptConnection|() -> ())
@@ -985,20 +995,24 @@ All available from the Shared bundle (`Modules.X`).
 - Maid:Destroy()
 - Example: `local m = Modules.Maid.new(); m:GiveTask(conn); m:Cleanup()`
 
+<a id="debounce--debouncethrottle"></a>
 ### Debounce — debounce/throttle
 - debounce(fn: (...any) -> (), waitSeconds: number) -> (...any) -> ()
 - throttle(fn: (...any) -> (), intervalSeconds: number) -> (...any) -> ()
 
+<a id="timer--tiny-scheduler"></a>
 ### Timer — tiny scheduler
 - wait(seconds: number)
 - setTimeout(fn: () -> (), delaySeconds: number) -> { Stop: () -> () }
 - setInterval(fn: () -> (), intervalSeconds: number) -> { Stop: () -> () }
 
+<a id="tweenutil--tween-numbersprops"></a>
 ### TweenUtil — tween numbers/props
 - tween(target: Instance|number, info: TweenInfo, goalOrOnStep: table|((number)->())) -> Tween? 
 - tweenAsync(instance: Instance, info: TweenInfo, goalProps: { [string]: any }) -> (boolean, string?)
 - sequence(instance: Instance, steps: { {info: TweenInfo, goal: {[string]: any}, yield: boolean?} }) -> boolean
 
+<a id="instanceutil--instance-helpers"></a>
 ### InstanceUtil — instance helpers
 - create(className: string, props?: table, children?: {Instance}) -> Instance
 - getOrCreate(parent: Instance, className: string, name?: string) -> Instance
@@ -1006,6 +1020,7 @@ All available from the Shared bundle (`Modules.X`).
 - destroyChildren(parent: Instance, predicate?: (Instance) -> boolean)
 - cloneInto(source: Instance, parent: Instance, props?: table) -> Instance
 
+<a id="tableutil--table-helpers"></a>
 ### TableUtil — table helpers
 - copy(t: any, deep?: boolean) -> any
 - assign(target: table, ...) -> table
@@ -1016,6 +1031,7 @@ All available from the Shared bundle (`Modules.X`).
 - find(list: table, fn: (any, number) -> boolean) -> any
 - keys(t: table) -> table; values(t: table) -> table; isArray(t: any) -> boolean
 
+<a id="stringutil--string-helpers"></a>
 ### StringUtil — string helpers
 - ltrim(s: string) -> string; rtrim(s: string) -> string; trim(s: string) -> string
 - split(s: string, sep: string, plain?: boolean) -> {string}; join(list: {string}, sep: string) -> string
@@ -1024,6 +1040,7 @@ All available from the Shared bundle (`Modules.X`).
 - padLeft(s: string, len: number, ch?: string) -> string; padRight(s: string, len: number, ch?: string) -> string
 - slugify(s: string) -> string; formatThousands(n: number) -> string
 
+<a id="formatutil--formatting-helpers"></a>
 ### FormatUtil — formatting helpers
 - withCommas(n: number) -> string
 - abbreviate(n: number, decimals?: number) -> string
@@ -1031,6 +1048,7 @@ All available from the Shared bundle (`Modules.X`).
 - bytes(n: number, decimals?: number) -> string
 - timeAgo(seconds: number) -> string
 
+<a id="mathutil--math-helpers"></a>
 ### MathUtil — math helpers
 - clamp(n, minV, maxV) -> number; lerp(a, b, t) -> number; invLerp(a, b, v) -> number
 - remap(v, inMin, inMax, outMin, outMax, doClamp?) -> number
@@ -1038,18 +1056,21 @@ All available from the Shared bundle (`Modules.X`).
 - approxEqual(a, b, eps?) -> boolean; randomRange(min, max, integer?) -> number
 - chooseWeighted(entries: { {item:any, weight:number} }) -> any
 
+<a id="cframeutil--cframe-helpers"></a>
 ### CFrameUtil — CFrame helpers
 - lookAt(origin: Vector3, target: Vector3, up?: Vector3) -> CFrame
 - fromYawPitchRoll(y, p, r) -> CFrame; toYawPitchRoll(cf: CFrame) -> (number, number, number)
 - rotateAround(cf: CFrame, origin: Vector3, axisUnit: Vector3, radians: number) -> CFrame
 - offset(cf: CFrame, delta: Vector3) -> CFrame; clampYaw(cf: CFrame, minYaw: number, maxYaw: number) -> CFrame
 
+<a id="vectorutil--vector3-helpers"></a>
 ### VectorUtil — Vector3 helpers
 - clampMagnitude(v: Vector3, max: number) -> Vector3; horizontal(v) -> Vector3
 - distance(a, b) -> number; distanceXZ(a, b) -> number
 - project(a, onto) -> Vector3; reject(a, onto) -> Vector3; angleBetween(a, b) -> number
 - fromYawPitch(yaw, pitch) -> Vector3; approximately(a, b, eps?) -> boolean; lerp(a, b, t) -> Vector3
 
+<a id="raycastutil--raycast-helpers"></a>
 ### RaycastUtil — raycast helpers
 - params(list?: {Instance}, mode?: "Include"|"Exclude") -> RaycastParams
 - ignoreCharacter(params: RaycastParams, who: Player|Model|Humanoid)
@@ -1057,11 +1078,13 @@ All available from the Shared bundle (`Modules.X`).
 - raycastFromTo(a: Vector3, b: Vector3, params?: RaycastParams) -> RaycastResult?
 - ground(position: Vector3, maxDistance?: number, params?: RaycastParams) -> RaycastResult?
 
+<a id="colorutil--color3-helpers"></a>
 ### ColorUtil — Color3 helpers
 - fromHex(hex: string) -> Color3; toHex(c: Color3) -> string
 - fromRGB(r,g,b) -> Color3; toRGB(c: Color3) -> (number, number, number)
 - lerp(a: Color3, b: Color3, t: number) -> Color3; lighten(c: Color3, factor: number) -> Color3; darken(c: Color3, factor: number) -> Color3
 
+<a id="collectionutil--collectionservice-tags"></a>
 ### CollectionUtil — CollectionService tags
 - addTag(inst: Instance, tag: string)
 - removeTag(inst: Instance, tag: string)
@@ -1071,10 +1094,12 @@ All available from the Shared bundle (`Modules.X`).
 - onRemoved(tag: string, callback: (Instance) -> ()) -> RBXScriptConnection
 - watchTag(tag: string, onAdded: (Instance)->(), onRemoved?: (Instance)->()) -> () -> ()
 
+<a id="timeutil--time-formatting"></a>
 ### TimeUtil — time formatting
 - nowUnix() -> number; formatDuration(seconds: number) -> string; humanize(seconds: number) -> string
 - iso8601(epoch?: number) -> string; localISO(epoch?: number) -> string
 
+<a id="patternutil--lua-pattern-utils"></a>
 ### PatternUtil — Lua pattern utils
 - escapePattern(s: string) -> string
 - findAll(s: string, pattern: string, init?: number) -> { [number]: { start:number, finish:number, captures:{any} } }
@@ -1085,11 +1110,13 @@ All available from the Shared bundle (`Modules.X`).
 - startsWithPattern(s: string, pattern: string) -> boolean; endsWithPattern(s: string, pattern: string) -> boolean
 - wildcardToPattern(glob: string) -> string
 
+<a id="promiseutil--promises"></a>
 ### PromiseUtil — Promises
 - Promise.new(executor)
 - :isSettled(); :andThen(onFulfilled?, onRejected?); :catch(onRejected); :finally(onFinally)
 - resolve(value); reject(reason); delay(seconds, value?); all(list); race(list); timeout(promiseOrFn, seconds, timeoutErr?); retry(fn, attempts?, backoff?)
 
+<a id="playerutil--playercharacter"></a>
 ### PlayerUtil — player/character
 - getPlayerFromCharacter(model: Instance) -> Player?
 - getHumanoid(target: any) -> Humanoid?; getHRP(target: any) -> BasePart?
@@ -1098,10 +1125,12 @@ All available from the Shared bundle (`Modules.X`).
 - waitForHRP(target: Player|Model, timeout?: number) -> BasePart?
 - isAlive(target: any) -> boolean
 
+<a id="soundutil--sound-helpers"></a>
 ### SoundUtil — sound helpers
 - preload(list: {Sound|string|number})
 - play(soundOrId: Sound|string|number, opts: { parent?: Instance, volume?: number, looped?: boolean, pitch?: number }) -> (Sound, { Stop: ()->(), FadeOut: (seconds:number)->() })
 
+<a id="randomutil--rng-convenience"></a>
 ### RandomUtil — RNG convenience
 - new(seed?: number) -> RNG
 - RNG:integer(min: number, max: number) -> number; RNG:number(min, max) -> number
@@ -1110,23 +1139,27 @@ All available from the Shared bundle (`Modules.X`).
 - RNG:weighted(entries: { {item:any, weight:number} }) -> any
 - RNG:bag(items: {any}) -> () -> any -- bag sampler
 
+<a id="ratelimiter--token-bucket"></a>
 ### RateLimiter — token bucket
 - new(capacity: number, refillPerSecond: number) -> Limiter
 - Limiter:allow(key: string, tokens?: number) -> (boolean, number)
 - Limiter:setCapacity(n: number); Limiter:setRefillPerSecond(n: number); Limiter:getState(key: string) -> { tokens:number, updated:number }
 
+<a id="statemachine--finite-state-machine"></a>
 ### StateMachine — finite state machine
 - new(initial: string) -> FSM
 - FSM:addState(name: string, def?: { onEnter?: (prev?, data?) -> (), onExit?: (next?, data?) -> () })
 - FSM:can(target: string) -> boolean; FSM:transition(target: string, data?: any)
 - FSM:destroy()
 
+<a id="cooldownutil--per-key-cooldowns"></a>
 ### CooldownUtil — per-key cooldowns
 - new(defaultDuration: number) -> CD
 - CD:set(key: string, duration?: number)
 - CD:timeRemaining(key: string) -> number
 - CD:canUse(key: string) -> boolean; CD:use(key: string) -> boolean; CD:clear(key: string)
 
+<a id="cacheutil--ttl-cache"></a>
 ### CacheUtil — TTL cache
 - new(defaultTtlSeconds?: number, maxSize?: number) -> Cache
 - Cache:set(key: string, value: any, ttlSeconds?: number)
@@ -1134,14 +1167,17 @@ All available from the Shared bundle (`Modules.X`).
 - Cache:getOrCompute(key: string, producer: () -> any, ttlSeconds?: number) -> any
 - Cache:delete(key: string); Cache:clear(); Cache:size() -> number
 
+<a id="uuidutil--idsstrings"></a>
 ### UUIDUtil — ids/strings
 - guid() -> string; randomString(length?: number, charset?: string) -> string; shortId(length?: number) -> string
 
+<a id="observable--reactive-value"></a>
 ### Observable — reactive value
 - new(initial: any) -> Observable
 - Observable:get() -> any; Observable:set(v: any)
 - Observable.Changed (Signal); Observable:Destroy()
 
+<a id="geometryutil--geometry-helpers"></a>
 ### GeometryUtil — geometry helpers
 - aabbFromPoints(points: {Vector3}) -> (Vector3 min, Vector3 max)
 - aabbToCFrameSize(minV: Vector3, maxV: Vector3) -> (CFrame, Vector3 size)
@@ -1150,32 +1186,39 @@ All available from the Shared bundle (`Modules.X`).
 - closestPointOnSegment(a: Vector3, b: Vector3, p: Vector3) -> Vector3
 - pointInTriangle2D(p: Vector2, a: Vector2, b: Vector2, c: Vector2) -> boolean
 
+<a id="easingutil--easing-curves"></a>
 ### EasingUtil — easing curves
 - linear(t)
 - quad/cubic/quart/quint In|Out|InOut(t)
 - sine In|Out|InOut(t); expo/circ/back/bounce/elastic variants
 
+<a id="deeptableutil--deep-ops"></a>
 ### DeepTableUtil — deep ops
 - deepClone(t) -> any; deepMerge(dest, src) -> any
 - getIn(t, path: {any}, default: any?) -> any; setIn(t, path: {any}, value: any) -> any
 - equalsDeep(a, b) -> boolean
 
+<a id="statutil--stats-helpers"></a>
 ### StatUtil — stats helpers
 - ema(prev: number?, x: number, alpha: number) -> number
 - Running() -> { push: (number)->(), mean: ()->number, min: number, max: number, count: number }
 
+<a id="hashutil--hashes"></a>
 ### HashUtil — hashes
 - stringHash(s: string) -> number; stableHash(value: any) -> number
 
+<a id="lrucache--lru-map-with-ttl"></a>
 ### LRUCache — LRU map with TTL
 - new(capacity: number) -> LRU
 - LRU:set(key: any, value: any, ttlSeconds?: number)
 - LRU:get(key: any) -> any
 - LRU:delete(key: any); LRU:clear(); LRU:len() -> number
 
+<a id="memoize--memoize-wrapper"></a>
 ### Memoize — memoize wrapper
 - wrap(fn: (...any)->any, options: { capacity?: number, ttl?: number }) -> (memoizedFn: (...any)->any, cache: LRUCache)
 
+<a id="eventbus--pubsub"></a>
 ### EventBus — pub/sub
 - new() -> Bus
 - Bus:subscribe(topic: string, handler: (...any)->()) -> RBXScriptConnection
@@ -1184,89 +1227,110 @@ All available from the Shared bundle (`Modules.X`).
 - Bus:hasSubscribers(topic: string) -> boolean
 - Bus:Destroy()
 
+<a id="deque--double-ended-queue"></a>
 ### Deque — double-ended queue
 - new() -> Deque
 - Deque:pushLeft(v); Deque:pushRight(v); Deque:popLeft() -> any; Deque:popRight() -> any
 - Deque:peekLeft() -> any; Deque:peekRight() -> any; Deque:clear(); Deque:len() -> number
 
+<a id="priorityqueue--min-heap"></a>
 ### PriorityQueue — min-heap
 - new(lessFn?: (a:any,b:any)->boolean) -> PQ
 - PQ:push(v); PQ:pop() -> any; PQ:peek() -> any; PQ:len() -> number
 
 ---
 
+<a id="client-modules"></a>
 ## Client modules
 
 All available from the Client bundle (`Client.X`).
 
+<a id="camerautil--camera-helpers"></a>
 ### CameraUtil — camera helpers
 - setSubject(subject?: Instance)
 - tweenTo(cf: CFrame, info: TweenInfo, focus?: Vector3)
 - shake(duration: number, magnitude?: number, frequency?: number)
 
+<a id="notificationutil--quick-toasts"></a>
 ### NotificationUtil — quick toasts
 - show(text: string, opts: { duration?: number, stroke?: boolean, position?: UDim2, anchor?: Vector2 })
 
+<a id="notificationqueue--queuedstacked-toasts"></a>
 ### NotificationQueue — queued/stacked toasts
 - new(opts?: { maxVisible?: number, gap?: number, position?: UDim2, anchor?: Vector2 }) -> Queue
 - Queue:destroy(); Queue:setMaxVisible(n: number); Queue:setGap(px: number)
 - Queue:setPosition(pos: UDim2, anchor?: Vector2); Queue:clear()
 - Queue:show(text: string, opts?); Queue:enqueue(text: string, opts?)
 
+<a id="modalutil--confirm-dialogs"></a>
 ### ModalUtil — confirm dialogs
 - confirm(opts: { title?: string, message?: string, buttons?: {string} }) -> Promise<string>
 
+<a id="clientratelimiter--client-side-limiter"></a>
 ### ClientRateLimiter — client-side limiter
 - new(capacity: number, refillPerSecond: number) -> Limiter
 - Limiter:allow(key: string, tokens?: number) -> (boolean, number)
 
+<a id="progressbar--simple-progress-ui"></a>
 ### ProgressBar — simple progress UI
 - create(parent?: Instance, opts?: { size?: UDim2, position?: UDim2, corner?: number, theme?: {bg:Color3, fill:Color3, text:Color3} }) -> Bar
 - Bar:SetProgress(alpha: number, tweenSeconds?: number)
 - Bar:SetText(text?: string); Bar:Show(); Bar:Hide(); Bar:Destroy()
 
+<a id="inpututil--input-helpers"></a>
 ### InputUtil — input helpers
 - bindAction(name: string, callback: ()->(), touchEnabled?: boolean, keys?: {Enum.KeyCode|Enum.UserInputType}) -> ()->()
 - bindOnce(name: string, callback: ()->(), touchEnabled?: boolean, keys?: {Enum.KeyCode|Enum.UserInputType}) -> ()->()
 - onKey(keyCode: Enum.KeyCode, fn: (pressed:boolean)->()) -> RBXScriptConnection
 - isTouch() -> boolean; isGamepad() -> boolean; isKeyboardMouse() -> boolean
 
+<a id="deviceutil--device-info"></a>
 ### DeviceUtil — device info
 - viewport() -> Vector2; platform() -> string; isSmallScreen() -> boolean; safeAreaInset() -> Vector2
 
+<a id="screenfadeutil--fade-overlay"></a>
 ### ScreenFadeUtil — fade overlay
 - fadeIn(duration: number, color?: Color3, transparency?: number)
 - fadeOut(duration: number)
 - flash(duration: number)
 
+<a id="guidragutil--draggable-frames"></a>
 ### GuiDragUtil — draggable frames
 - attach(frame: GuiObject, opts?: { clampToScreen?: boolean, sensitivity?: number }) -> ()->()
 
+<a id="viewportutil--viewportframe-helpers"></a>
 ### ViewportUtil — ViewportFrame helpers
 - createViewport(size: UDim2, bg?: Color3) -> ViewportFrame
 - setModel(vpf: ViewportFrame, model: Model, opts?: { cameraCFrame?: CFrame, distance?: number })
 
+<a id="cursorutil--mouse-cursor"></a>
 ### CursorUtil — mouse cursor
 - show(); hide(); setIcon(icon: string)
 - lockCenter(enable: boolean); isLocked() -> boolean
 
+<a id="screenshakeutil--camera-shake"></a>
 ### ScreenShakeUtil — camera shake
 - start(params: { amplitude: number, frequency: number, duration: number, decay?: boolean }) -> ()->()
 
+<a id="highlightutil--highlight-partsmodels"></a>
 ### HighlightUtil — highlight parts/models
 - show(target: Instance, options?: { color?: Color3, fill?: number, outline?: number, duration?: number }) -> (Highlight, ()->())
 
+<a id="tooltiputil--hover-tooltips"></a>
 ### TooltipUtil — hover tooltips
 - bind(guiObject: GuiObject, options: { text: string, delay?: number, offset?: Vector2 }) -> ()->()
 
+<a id="hapticutil--gamepad-rumble"></a>
 ### HapticUtil — gamepad rumble
 - rumble(gamepad: Enum.UserInputType, intensity: number, duration: number)
 - rumbleAll(intensity: number, duration: number)
 
+<a id="screenresizeutil--viewport-size-changes"></a>
 ### ScreenResizeUtil — viewport size changes
 - onResize(handler: (Vector2)->()) -> RBXScriptConnection
 - getViewportSize() -> Vector2
 
+<a id="cursorrayutil--screen-to-worldraycast"></a>
 ### CursorRayUtil — screen-to-world/raycast
 - screenPointToRay(point: Vector2, depth?: number) -> (Vector3 origin, Vector3 direction)
 - mouseRay(depth?: number) -> (Vector3 origin, Vector3 direction)
@@ -1275,41 +1339,50 @@ All available from the Client bundle (`Client.X`).
 - worldPointFromScreen(point: Vector2, depth: number) -> Vector3
 - worldPointFromMouse(depth: number) -> Vector3
 
+<a id="buttonfxutil--hoverpress-scale-fx"></a>
 ### ButtonFXUtil — hover/press scale FX
 - bind(button: GuiObject, options?: { hoverScale?: number, pressScale?: number, tween?: TweenInfo }) -> ()->()
 
+<a id="layoututil--ui-layout-builders"></a>
 ### LayoutUtil — UI layout builders
 - createList(options?: { parent?: Instance, padding?: UDim, fill?: boolean, align?: Enum.HorizontalAlignment }) -> UIListLayout
 - createGrid(options?: { parent?: Instance, cellSize?: UDim2, cellPadding?: UDim2 }) -> UIGridLayout
 - createTable(options?: { parent?: Instance, padding?: UDim }) -> UITableLayout
 - createPadding(options?: { parent?: Instance, left?: UDim, right?: UDim, top?: UDim, bottom?: UDim }) -> UIPadding
 
+<a id="keybindhintutil--keybind-hints"></a>
 ### KeybindHintUtil — keybind hints
 - show(options: { key: string, text: string, position?: UDim2 }) -> string|number
 - remove(id: string|number)
 
+<a id="touchgestureutil--panpinchrotate"></a>
 ### TouchGestureUtil — pan/pinch/rotate
 - bind(options?: { minPinch?: number, minRotate?: number }) -> Controller
 - Controller.OnPan(delta: Vector2); Controller.OnPinch(delta: number); Controller.OnRotate(radians: number)
 - Controller:Destroy()
 
+<a id="offscreenindicatorutil--edge-arrows"></a>
 ### OffscreenIndicatorUtil — edge arrows
 - attach(target: Instance, options?: { margin?: number, color?: Color3 }) -> ()->()
 
+<a id="scrollutil--smooth-scroll"></a>
 ### ScrollUtil — smooth scroll
 - smoothScrollTo(scroller: ScrollingFrame, target: Vector2, tweenInfo?: TweenInfo)
 - scrollBy(scroller: ScrollingFrame, dx: number, dy: number, tweenInfo?: TweenInfo)
 
+<a id="sliderutil--horizontal-slider"></a>
 ### SliderUtil — horizontal slider
 - create(options: { parent?: Instance, width?: number, initial?: number }) -> Slider
 - Slider.OnChanged(value: number) (Signal); Slider:SetValue(value: number)
 
 ---
 
+<a id="server-modules"></a>
 ## Server modules
 
 All available from the Server bundle (`Server.X`).
 
+<a id="teleportutil--teleports"></a>
 ### TeleportUtil — teleports
 - teleportInServer(target: Player|Model, destination: CFrame|Vector3|BasePart, options?: { keepOrientation?: boolean, offset?: Vector3, unseat?: boolean }) -> boolean
 - teleportToPlace(placeId: number, players: Player|{Player}, teleportData?: any, options?: { retries?: number, backoff?: number }) -> (boolean, string?)
@@ -1317,11 +1390,13 @@ All available from the Server bundle (`Server.X`).
 - reserveServer(placeId: number) -> (string accessCode, string reservedServerId)
 - teleportToPrivateServer(placeId: number, players: Player|{Player}, teleportData?: any, options?: { retries?: number, backoff?: number }) -> (boolean ok, string? errMsg, string? accessCode)
 
+<a id="matchmakingutil--queueparty-matching"></a>
 ### MatchmakingUtil — queue/party matching
 - new(placeId: number, partySize: number, opts?: { retries?: number, backoff?: number, pollSeconds?: number }) -> MM
 - MM:onMatched(cb: ({Player})->()) -> RBXScriptConnection
 - MM:enqueue(player: Player); MM:dequeue(player: Player); MM:size() -> number; MM:flush(); MM:destroy()
 
+<a id="httputil--http-requests"></a>
 ### HttpUtil — HTTP requests
 - request(opts: { method: string, url: string, headers?: table, body?: string|table, json?: boolean, retries?: number, backoff?: number }) -> (ok: boolean, res: { StatusCode: number, Success: boolean, Headers: table, Body: string, Json?: any }?, err?: string)
 - get(url: string, headers?: table, opts?: { retries?: number, backoff?: number }) -> (ok: boolean, res?: table, err?: string)
@@ -1329,6 +1404,7 @@ All available from the Server bundle (`Server.X`).
 - fetchJson(url: string, opts?: { retries?: number, backoff?: number }) -> (ok: boolean, json?: any, err?: string)
 - encode(value: any) -> string; decode(str: string) -> any
 
+<a id="datastoreutil--datastore-helpers"></a>
 ### DataStoreUtil — DataStore helpers
 - getStore(name: string, scope?: string) -> DataStore
 - waitForBudget(type: Enum.DataStoreRequestType, min?: number, timeout?: number) -> boolean
@@ -1338,6 +1414,7 @@ All available from the Server bundle (`Server.X`).
 - increment(store: GlobalDataStore, key: string, delta: number, opts?: { retries?: number, backoff?: number, budget?: boolean }) -> (ok: boolean, newValue?: number, err?: string)
 - remove(store: GlobalDataStore, key: string, opts?: { retries?: number, backoff?: number, budget?: boolean }) -> (ok: boolean, err?: string)
 
+<a id="leaderstatsutil--leaderstats"></a>
 ### LeaderstatsUtil — leaderstats
 - addNumber(player: Player, name: string, initial?: number) -> NumberValue
 - addInt(player: Player, name: string, initial?: number) -> IntValue
@@ -1350,10 +1427,12 @@ All available from the Server bundle (`Server.X`).
 	Creates a `leaderstats` folder for all players and on join; returns disconnect function.
 - attachPersistence(store: GlobalDataStore, keyFn: (player: Player)->string) -> { load: (Player)->(boolean, string?), save: (Player)->(boolean, string?) }
 
+<a id="messagingserviceutil--pubsub"></a>
 ### MessagingServiceUtil — pub/sub
 - publish(topic: string, data: any, opts?: { retries?: number, backoff?: number }) -> (boolean, any)
 - subscribe(topic: string, handler: (data:any, message:any)->(), opts?: { safe?: boolean }) -> { Disconnect: ()->() }
 
+<a id="memorystoreutil--queuesmaps"></a>
 ### MemoryStoreUtil — queues/maps
 - queue(name: string) -> Queue
 	- Queue.enqueue(item: any, ttl?: number) -> (boolean, any)
@@ -1364,15 +1443,18 @@ All available from the Server bundle (`Server.X`).
 	- Map.set(key: string, value: any, expiration?: number) -> (boolean, any)
 	- Map.increment(key: string, delta?: number, expiration?: number) -> (boolean, number|any)
 
+<a id="badgeutil--badges"></a>
 ### BadgeUtil — badges
 - hasBadge(userIdOrPlayer: number|Player, badgeId: number) -> (boolean, boolean|any)
 - awardIfNotOwned(userIdOrPlayer: number|Player, badgeId: number) -> (boolean, any)
 
+<a id="grouputil--group-info"></a>
 ### GroupUtil — group info
 - getRoleInGroup(userIdOrPlayer: number|Player, groupId: number) -> (string?|nil, string?|nil)
 - getRankInGroup(userIdOrPlayer: number|Player, groupId: number) -> (number, string?|nil)
 - isInGroup(userIdOrPlayer: number|Player, groupId: number, minRank?: number) -> boolean
 
+<a id="marketplaceutil--purchases"></a>
 ### MarketplaceUtil — purchases
 - ownsGamePass(player: Player, gamePassId: number) -> (boolean, boolean|any)
 - promptGamePass(player: Player, gamePassId: number)
@@ -1380,12 +1462,14 @@ All available from the Server bundle (`Server.X`).
 - createReceiptRouter(map: { [productId: number]: (player: Player, receiptInfo: any) -> Enum.ProductPurchaseDecision }) -> (receiptInfo: any) -> Enum.ProductPurchaseDecision
 - bindProcessReceipt(fn: (receiptInfo: any) -> Enum.ProductPurchaseDecision)
 
+<a id="policyutil--policy-checks"></a>
 ### PolicyUtil — policy checks
 - getPolicy(player: Player) -> (table?|nil, string?|nil)
 - arePaidRandomItemsRestricted(player: Player) -> boolean?|nil
 - isSubjectToChinaPolicies(player: Player) -> boolean?|nil
 - isVoiceEnabled(player: Player) -> boolean?|nil
 
+<a id="banutil--bans"></a>
 ### BanUtil — bans
 - ban(userIdOrPlayer: number|Player, reason?: string, durationSeconds?: number, by?: string) -> (boolean, any)
 - unban(userIdOrPlayer: number|Player) -> (boolean, any)
@@ -1393,28 +1477,34 @@ All available from the Server bundle (`Server.X`).
 - isBanned(userIdOrPlayer: number|Player) -> boolean
 - shouldKick(player: Player) -> (boolean, string?)
 
+<a id="webhookutil--json-webhooks"></a>
 ### WebhookUtil — JSON webhooks
 - postJson(url: string, payload: table, opts?: { headers?: table, compress?: boolean, httpService?: HttpService }) -> (boolean, any)
 
+<a id="chatfilterutil--text-filter"></a>
 ### ChatFilterUtil — text filter
 - filterForBroadcast(text: string, fromUserId: number) -> (boolean, string|any)
 - filterForUser(text: string, fromUserId: number, toUserId: number) -> (boolean, string|any)
 
+<a id="accesscontrolutil--feature-gates"></a>
 ### AccessControlUtil — feature gates
 - canUseFeature(player: Player, rules: { allowUserIds?: {number}, denyUserIds?: {number}, group?: { id: number, minRank?: number }, gamePassId?: number, requireVoice?: boolean, forbidPaidRandomItems?: boolean }, deps?: { PolicyUtil?: any, GroupUtil?: any, MarketplaceUtil?: any }) -> (boolean, string?)
 
+<a id="jobscheduler--background-jobs"></a>
 ### JobScheduler — background jobs
 - new(name: string, opts?: { visibility?: number, poll?: number }) -> Scheduler
 - Scheduler:enqueue(payload: any, ttl?: number) -> (boolean, any)
 - Scheduler:startWorker(handler: (payload: any, entry: { Id: string, Value: any })->())
 - Scheduler:stopWorker()
 
+<a id="auditlogutil--batched-logging"></a>
 ### AuditLogUtil — batched logging
 - new(url: string, opts?: { batchSize?: number, flushInterval?: number }) -> Logger
 - Logger:setDestination(url: string)
 - Logger:log(eventName: string, fields?: table)
 - Logger:start(); Logger:stop()
 
+<a id="characterscaleutil--r15-scaling"></a>
 ### CharacterScaleUtil — R15 scaling
 - getScales(target: Player|Model|Humanoid) -> { height: number, width: number, depth: number, head: number }
 - setScale(target: Player|Model|Humanoid, scales: { height?: number, width?: number, depth?: number, head?: number }, options?: { clamp?: boolean }) -> (boolean, string?)
@@ -1423,6 +1513,7 @@ All available from the Server bundle (`Server.X`).
 - tweenUniformScale(target: Player|Model|Humanoid, scale: number, tweenInfo: TweenInfo, options?: { yield?: boolean }) -> (boolean, string?)
 - reset(target: Player|Model|Humanoid) -> (boolean, string?)
 
+<a id="charactermovementutil--movement-properties"></a>
 ### CharacterMovementUtil — movement properties
 - get(target: Player|Model|Humanoid) -> { WalkSpeed: number, JumpPower?: number, JumpHeight?: number, AutoRotate: boolean, HipHeight: number, MaxSlopeAngle: number }|nil, string?
 - set(target: Player|Model|Humanoid, props: table) -> (boolean, string?)
@@ -1434,6 +1525,7 @@ All available from the Server bundle (`Server.X`).
 - tempWalkSpeed(target: Player|Model|Humanoid, value: number, options?: { mode?: "set"|"add"|"mul", duration?: number }) -> (boolean, ()->()|string)
 - apply(target: Player|Model|Humanoid, props: table) -> (boolean, ()->()|string)
 
+<a id="characterappearanceutil--outfitscolorsaccessories"></a>
 ### CharacterAppearanceUtil — outfits/colors/accessories
 - applyDescription(target: Player|Model|Humanoid, description: HumanoidDescription) -> (boolean, string?)
 - applyUserOutfit(target: Player|Model|Humanoid, userId: number) -> (boolean, string?)
@@ -1443,11 +1535,13 @@ All available from the Server bundle (`Server.X`).
 - removeAccessories(target: Player|Model|Humanoid, predicate?: (Accessory)->boolean) -> (number|false, string?)
 - setClothingIds(target: Player|Model|Humanoid, shirtId?: number|string, pantsId?: number|string) -> (boolean, string?)
 
+<a id="charactervisibilityutil--transparencyghost"></a>
 ### CharacterVisibilityUtil — transparency/ghost
 - setTransparency(target: Player|Model|Humanoid, alpha: number, options?: { nonCollide?: boolean }) -> (boolean, string?)
 - setInvisible(target: Player|Model|Humanoid, enabled: boolean, options?: { nonCollide?: boolean }) -> (boolean, string?)
 - setGhostMode(target: Player|Model|Humanoid, enabled: boolean) -> (boolean, string?)
 
+<a id="characterhealthutil--healthinvulnerability"></a>
 ### CharacterHealthUtil — health/invulnerability
 - setMaxHealth(target: Player|Model|Humanoid, maxHealth: number, options?: { clamp?: boolean }) -> (boolean, string?)
 - heal(target: Player|Model|Humanoid, amount: number) -> (boolean, string?)
@@ -1456,6 +1550,7 @@ All available from the Server bundle (`Server.X`).
 
 ---
 
+<a id="usage-notes"></a>
 ## Usage notes
 - Prefer bundle requires; they export all modules as fields.
 - Server-only modules must be required on the server.
