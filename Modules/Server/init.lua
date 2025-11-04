@@ -30,5 +30,6 @@ M.ChatFilterUtil = require(script.Parent.ChatFilterUtil)
 M.AccessControlUtil = require(script.Parent.AccessControlUtil)
 M.JobScheduler = require(script.Parent.JobScheduler)
 M.AuditLogUtil = require(script.Parent.AuditLogUtil)
+M.CharacterScaleUtil = require(script.Parent.CharacterScaleUtil)
 
 return M

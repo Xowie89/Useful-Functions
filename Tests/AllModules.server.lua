@@ -378,6 +378,22 @@ runTest("AuditLogUtil (server)", function()
 	logger:start(); logger:stop()
 end)
 
+runTest("CharacterScaleUtil (server)", function()
+	assert(type(Modules.CharacterScaleUtil) == "table")
+	-- Create a dummy R15-like Humanoid; scaling values will be NumberValues on Humanoid
+	local model = Instance.new("Model")
+	local humanoid = Instance.new("Humanoid")
+	humanoid.Parent = model
+	local ok, err = Modules.CharacterScaleUtil.setUniformScale(humanoid, 1.1)
+	assert(ok, err)
+	local scales = Modules.CharacterScaleUtil.getScales(humanoid)
+	assert(scales and math.abs(scales.height - 1.1) < 1e-6)
+	Modules.CharacterScaleUtil.reset(humanoid)
+	scales = Modules.CharacterScaleUtil.getScales(humanoid)
+	assert(math.abs(scales.height - 1) < 1e-6)
+	model:Destroy()
+end)
+
 print(string.format("AllModules.server: %d passed, %d failed (total %d)", passed, failed, total))
 if failed > 0 then
 	warn("Some server tests failed.")

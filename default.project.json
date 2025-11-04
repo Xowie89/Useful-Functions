@@ -112,6 +112,8 @@
             "AccessControlUtil": { "$path": "Modules/Server/AccessControlUtil.lua" },
             "JobScheduler": { "$path": "Modules/Server/JobScheduler.lua" },
             "AuditLogUtil": { "$path": "Modules/Server/AuditLogUtil.lua" }
+            ,
+            "CharacterScaleUtil": { "$path": "Modules/Server/CharacterScaleUtil.lua" }
           }
         }
       },

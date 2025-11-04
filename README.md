@@ -835,6 +835,28 @@ logger:log("player_join", { userId = player.UserId })
 -- Later: logger:stop()
 ```
 
+### CharacterScaleUtil (server)
+
+Resize player characters (R15) by setting/tweening humanoid scale values.
+
+```lua
+local ServerModules = require(ServerScriptService.UsefulFunctions.UsefulFunctionsServer)
+local CS = ServerModules.CharacterScaleUtil
+
+-- Uniform scale
+CS.setUniformScale(player, 1.1) -- or pass humanoid
+
+-- Individual scales
+CS.setScale(player, { height = 1.05, width = 0.95, depth = 1.0, head = 1.1 })
+
+-- Tween to scale over time
+CS.tweenUniformScale(player, 1.2, TweenInfo.new(0.5))
+
+-- Read/reset
+local s = CS.getScales(player)
+CS.reset(player)
+```
+
 ## Folder placement
 - ServerScriptService: best for server-only utilities (TeleportUtil usage).
 - ReplicatedStorage: for shared modules (most utilities).
