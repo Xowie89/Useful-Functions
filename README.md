@@ -54,15 +54,18 @@ See API.md for a compact list of every module with its functions and usage notes
 Press Play in Studio and watch the Output for pass/fail summaries.
 
 -- Direct setters
+```Lua
 Mv.setWalkSpeed(player, 20)
-Mv.setJumpPower(player, 60)    -- switches to JumpPower mode
-Mv.setJumpHeight(player, 8)    -- switches to JumpHeight mode
+Mv.setJumpPower(player, 60) -- switches to JumpPower mode
+Mv.setJumpHeight(player, 8) -- switches to JumpHeight mode
 Mv.setAutoRotate(player, false)
 Mv.setHipHeight(player, 2)
+```
 
 -- Temporary boost (auto-restores after duration)
-local ok, restore = Mv.tempWalkSpeed(player, 1.5, { mode = "mul", duration = 5 })
--- Optionally: restore() early
+```Lua
+local ok, restore = Mv.tempWalkSpeed(player, 1.5, { mode = "mul", duration = 5 }) -- Optionally: restore() early
+```
 
 ### CharacterHealthUtil (server)
 
