@@ -109,7 +109,7 @@ Tip: In Studio, individual modules are also mapped under ReplicatedStorage/Serve
 
 All available from the Shared bundle (`Modules.X`).
 
-<details>
+<details open>
 <summary>Quick index</summary>
 
 [CacheUtil](#cacheutil--ttl-cache) · [CFrameUtil](#cframeutil--cframe-helpers) · [CollectionUtil](#collectionutil--collectionservice-tags) · [ColorUtil](#colorutil--color3-helpers) · [CooldownUtil](#cooldownutil--per-key-cooldowns) · [Debounce](#debounce--debouncethrottle) · [DeepTableUtil](#deeptableutil--deep-ops) · [Deque](#deque--double-ended-queue) · [EasingUtil](#easingutil--easing-curves) · [EventBus](#eventbus--pubsub) · [FormatUtil](#formatutil--formatting-helpers) · [GeometryUtil](#geometryutil--geometry-helpers) · [HashUtil](#hashutil--hashes) · [InstanceUtil](#instanceutil--instance-helpers) · [LRUCache](#lrucache--lru-map-with-ttl) · [Maid](#maid--cleanup-aggregator) · [MathUtil](#mathutil--math-helpers) · [Memoize](#memoize--memoize-wrapper) · [Observable](#observable--reactive-value) · [PatternUtil](#patternutil--lua-pattern-utils) · [PlayerUtil](#playerutil--playercharacter) · [PriorityQueue](#priorityqueue--min-heap) · [PromiseUtil](#promiseutil--promises) · [RandomUtil](#randomutil--rng-convenience) · [RateLimiter](#ratelimiter--token-bucket) · [RaycastUtil](#raycastutil--raycast-helpers) · [Signal](#signal--lightweight-events) · [SoundUtil](#soundutil--sound-helpers) · [StateMachine](#statemachine--finite-state-machine) · [StatUtil](#statutil--stats-helpers) · [StringUtil](#stringutil--string-helpers) · [TableUtil](#tableutil--table-helpers) · [TimeUtil](#timeutil--time-formatting) · [Timer](#timer--tiny-scheduler) · [TweenUtil](#tweenutil--tween-numbersprops) · [UUIDUtil](#uuidutil--idsstrings) · [VectorUtil](#vectorutil--vector3-helpers)
@@ -414,6 +414,8 @@ All available from the Shared bundle (`Modules.X`).
 - fromYawPitch(yaw, pitch) -> Vector3; approximately(a, b, eps?) -> boolean; lerp(a, b, t) -> Vector3
 - Example: `Modules.VectorUtil.clampMagnitude(Vector3.new(5,0,0),2)`
 
+[Back to Shared](#shared-modules) · [Back to top](#table-of-contents)
+
 ---
 
 <a id="client-modules"></a>
@@ -421,7 +423,7 @@ All available from the Shared bundle (`Modules.X`).
 
 All available from the Client bundle (`Client.X`).
 
-<details>
+<details open>
 <summary>Quick index</summary>
 
 [ButtonFXUtil](#buttonfxutil--hoverpress-scale-fx) · [CameraUtil](#camerautil--camera-helpers) · [ClientRateLimiter](#clientratelimiter--client-side-limiter) · [CursorRayUtil](#cursorrayutil--screen-to-worldraycast) · [CursorUtil](#cursorutil--mouse-cursor) · [DeviceUtil](#deviceutil--device-info) · [GuiDragUtil](#guidragutil--draggable-frames) · [HapticUtil](#hapticutil--gamepad-rumble) · [HighlightUtil](#highlightutil--highlight-partsmodels) · [InputUtil](#inpututil--input-helpers) · [KeybindHintUtil](#keybindhintutil--keybind-hints) · [LayoutUtil](#layoututil--ui-layout-builders) · [ModalUtil](#modalutil--confirm-dialogs) · [NotificationQueue](#notificationqueue--queuedstacked-toasts) · [NotificationUtil](#notificationutil--quick-toasts) · [OffscreenIndicatorUtil](#offscreenindicatorutil--edge-arrows) · [ProgressBar](#progressbar--simple-progress-ui) · [ScreenFadeUtil](#screenfadeutil--fade-overlay) · [ScreenResizeUtil](#screenresizeutil--viewport-size-changes) · [ScreenShakeUtil](#screenshakeutil--camera-shake) · [ScrollUtil](#scrollutil--smooth-scroll) · [SliderUtil](#sliderutil--horizontal-slider) · [TooltipUtil](#tooltiputil--hover-tooltips) · [TouchGestureUtil](#touchgestureutil--panpinchrotate) · [ViewportUtil](#viewportutil--viewportframe-helpers)
@@ -583,6 +585,8 @@ All available from the Client bundle (`Client.X`).
 - setModel(vpf: ViewportFrame, model: Model, opts?: { cameraCFrame?: CFrame, distance?: number })
 - Example: `Client.ViewportUtil.createViewport(UDim2.fromOffset(200,200))`
 
+[Back to Client](#client-modules) · [Back to top](#table-of-contents)
+
 ---
 
 <a id="server-modules"></a>
@@ -590,7 +594,7 @@ All available from the Client bundle (`Client.X`).
 
 All available from the Server bundle (`Server.X`).
 
-<details>
+<details open>
 <summary>Quick index</summary>
 
 [AccessControlUtil](#accesscontrolutil--feature-gates) · [AuditLogUtil](#auditlogutil--batched-logging) · [BadgeUtil](#badgeutil--badges) · [BanUtil](#banutil--bans) · [CharacterAppearanceUtil](#characterappearanceutil--outfitscolorsaccessories) · [CharacterHealthUtil](#characterhealthutil--healthinvulnerability) · [CharacterMovementUtil](#charactermovementutil--movement-properties) · [CharacterScaleUtil](#characterscaleutil--r15-scaling) · [CharacterVisibilityUtil](#charactervisibilityutil--transparencyghost) · [ChatFilterUtil](#chatfilterutil--text-filter) · [DataStoreUtil](#datastoreutil--datastore-helpers) · [DistributedLockUtil](#distributedlockutil--distributed-locks) · [GlobalRateLimiter](#globalratelimiter--distributed-token-bucket) · [GroupUtil](#grouputil--group-info) · [HttpUtil](#httputil--http-requests) · [JobScheduler](#jobscheduler--background-jobs) · [LeaderstatsUtil](#leaderstatsutil--leaderstats) · [MarketplaceUtil](#marketplaceutil--purchases) · [MatchmakingUtil](#matchmakingutil--queueparty-matching) · [MemoryStoreUtil](#memorystoreutil--queuesmaps) · [MessagingServiceUtil](#messagingserviceutil--pubsub) · [PolicyUtil](#policyutil--policy-checks) · [ServerMetricsUtil](#servermetricsutil--server-metrics) · [TeleportUtil](#teleportutil--teleports) · [WebhookUtil](#webhookutil--json-webhooks)
@@ -804,6 +808,8 @@ All available from the Server bundle (`Server.X`).
 ### WebhookUtil — JSON webhooks
 - postJson(url: string, payload: table, opts?: { headers?: table, compress?: boolean, httpService?: HttpService }) -> (boolean, any)
 - Example: `Server.WebhookUtil.postJson("https://example.com",{hello="world"})`
+
+[Back to Server](#server-modules) · [Back to top](#table-of-contents)
 
 ---
 
