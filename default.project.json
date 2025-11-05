@@ -116,6 +116,11 @@
             "GlobalRateLimiter": { "$path": "Modules/Server/GlobalRateLimiter.lua" },
             "ServerMetricsUtil": { "$path": "Modules/Server/ServerMetricsUtil.lua" }
             ,
+            "ShutdownUtil": { "$path": "Modules/Server/ShutdownUtil.lua" },
+            "CrossServerEvent": { "$path": "Modules/Server/CrossServerEvent.lua" },
+            "PlayerSessionUtil": { "$path": "Modules/Server/PlayerSessionUtil.lua" },
+            "PlayerBanEnforcer": { "$path": "Modules/Server/PlayerBanEnforcer.lua" },
+            "ServerHeartbeat": { "$path": "Modules/Server/ServerHeartbeat.lua" },
             "CharacterScaleUtil": { "$path": "Modules/Server/CharacterScaleUtil.lua" },
             "CharacterMovementUtil": { "$path": "Modules/Server/CharacterMovementUtil.lua" },
             "CharacterAppearanceUtil": { "$path": "Modules/Server/CharacterAppearanceUtil.lua" },

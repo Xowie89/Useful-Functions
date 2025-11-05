@@ -85,6 +85,7 @@ Tip: In Studio, individual modules are also mapped under ReplicatedStorage/Serve
 	- [CharacterScaleUtil](#characterscaleutil--r15-scaling)
 	- [CharacterVisibilityUtil](#charactervisibilityutil--transparencyghost)
 	- [ChatFilterUtil](#chatfilterutil--text-filter)
+	- [CrossServerEvent](#crossserverevent--cross-server-events)
 	- [DataStoreUtil](#datastoreutil--datastore-helpers)
 	- [DistributedLockUtil](#distributedlockutil--distributed-locks)
 	- [GlobalRateLimiter](#globalratelimiter--distributed-token-bucket)
@@ -96,8 +97,12 @@ Tip: In Studio, individual modules are also mapped under ReplicatedStorage/Serve
 	- [MatchmakingUtil](#matchmakingutil--queueparty-matching)
 	- [MemoryStoreUtil](#memorystoreutil--queuesmaps)
 	- [MessagingServiceUtil](#messagingserviceutil--pubsub)
+	- [PlayerBanEnforcer](#playerbanenforcer--auto-kick-banned)
+	- [PlayerSessionUtil](#playersessionutil--player-sessions)
 	- [PolicyUtil](#policyutil--policy-checks)
 	- [ServerMetricsUtil](#servermetricsutil--server-metrics)
+	- [ServerHeartbeat](#serverheartbeat--liveness-heartbeat)
+	- [ShutdownUtil](#shutdownutil--graceful-shutdown)
 	- [TeleportUtil](#teleportutil--teleports)
 	- [WebhookUtil](#webhookutil--json-webhooks)
 - [Usage notes](#usage-notes)
@@ -597,7 +602,8 @@ All available from the Server bundle (`Server.X`).
 <details open>
 <summary>Quick index</summary>
 
-[AccessControlUtil](#accesscontrolutil--feature-gates) · [AuditLogUtil](#auditlogutil--batched-logging) · [BadgeUtil](#badgeutil--badges) · [BanUtil](#banutil--bans) · [CharacterAppearanceUtil](#characterappearanceutil--outfitscolorsaccessories) · [CharacterHealthUtil](#characterhealthutil--healthinvulnerability) · [CharacterMovementUtil](#charactermovementutil--movement-properties) · [CharacterScaleUtil](#characterscaleutil--r15-scaling) · [CharacterVisibilityUtil](#charactervisibilityutil--transparencyghost) · [ChatFilterUtil](#chatfilterutil--text-filter) · [DataStoreUtil](#datastoreutil--datastore-helpers) · [DistributedLockUtil](#distributedlockutil--distributed-locks) · [GlobalRateLimiter](#globalratelimiter--distributed-token-bucket) · [GroupUtil](#grouputil--group-info) · [HttpUtil](#httputil--http-requests) · [JobScheduler](#jobscheduler--background-jobs) · [LeaderstatsUtil](#leaderstatsutil--leaderstats) · [MarketplaceUtil](#marketplaceutil--purchases) · [MatchmakingUtil](#matchmakingutil--queueparty-matching) · [MemoryStoreUtil](#memorystoreutil--queuesmaps) · [MessagingServiceUtil](#messagingserviceutil--pubsub) · [PolicyUtil](#policyutil--policy-checks) · [ServerMetricsUtil](#servermetricsutil--server-metrics) · [TeleportUtil](#teleportutil--teleports) · [WebhookUtil](#webhookutil--json-webhooks)
+[AccessControlUtil](#accesscontrolutil--feature-gates) · [AuditLogUtil](#auditlogutil--batched-logging) · [BadgeUtil](#badgeutil--badges) · [BanUtil](#banutil--bans) · [CharacterAppearanceUtil](#characterappearanceutil--outfitscolorsaccessories) · [CharacterHealthUtil](#characterhealthutil--healthinvulnerability) · [CharacterMovementUtil](#charactermovementutil--movement-properties) · [CharacterScaleUtil](#characterscaleutil--r15-scaling) · [CharacterVisibilityUtil](#charactervisibilityutil--transparencyghost) · [ChatFilterUtil](#chatfilterutil--text-filter) · [CrossServerEvent](#crossserverevent--cross-server-events) · [DataStoreUtil](#datastoreutil--datastore-helpers) · [DistributedLockUtil](#distributedlockutil--distributed-locks) · [GlobalRateLimiter](#globalratelimiter--distributed-token-bucket) · [GroupUtil](#grouputil--group-info) · [HttpUtil](#httputil--http-requests) · [JobScheduler](#jobscheduler--background-jobs) · [LeaderstatsUtil](#leaderstatsutil--leaderstats) · [MarketplaceUtil](#marketplaceutil--purchases) · [MatchmakingUtil](#matchmakingutil--queueparty-matching) · [MemoryStoreUtil](#memorystoreutil--queuesmaps) · [MessagingServiceUtil](#messagingserviceutil--pubsub) · [PlayerSessionUtil](#playersessionutil--player-sessions) · [PolicyUtil](#policyutil--policy-checks) · [ServerMetricsUtil](#servermetricsutil--server-metrics) · [ShutdownUtil](#shutdownutil--graceful-shutdown) · [TeleportUtil](#teleportutil--teleports) · [WebhookUtil](#webhookutil--json-webhooks)
+ [AccessControlUtil](#accesscontrolutil--feature-gates) · [AuditLogUtil](#auditlogutil--batched-logging) · [BadgeUtil](#badgeutil--badges) · [BanUtil](#banutil--bans) · [CharacterAppearanceUtil](#characterappearanceutil--outfitscolorsaccessories) · [CharacterHealthUtil](#characterhealthutil--healthinvulnerability) · [CharacterMovementUtil](#charactermovementutil--movement-properties) · [CharacterScaleUtil](#characterscaleutil--r15-scaling) · [CharacterVisibilityUtil](#charactervisibilityutil--transparencyghost) · [ChatFilterUtil](#chatfilterutil--text-filter) · [CrossServerEvent](#crossserverevent--cross-server-events) · [DataStoreUtil](#datastoreutil--datastore-helpers) · [DistributedLockUtil](#distributedlockutil--distributed-locks) · [GlobalRateLimiter](#globalratelimiter--distributed-token-bucket) · [GroupUtil](#grouputil--group-info) · [HttpUtil](#httputil--http-requests) · [JobScheduler](#jobscheduler--background-jobs) · [LeaderstatsUtil](#leaderstatsutil--leaderstats) · [MarketplaceUtil](#marketplaceutil--purchases) · [MatchmakingUtil](#matchmakingutil--queueparty-matching) · [MemoryStoreUtil](#memorystoreutil--queuesmaps) · [MessagingServiceUtil](#messagingserviceutil--pubsub) · [PlayerBanEnforcer](#playerbanenforcer--auto-kick-banned) · [PlayerSessionUtil](#playersessionutil--player-sessions) · [PolicyUtil](#policyutil--policy-checks) · [ServerMetricsUtil](#servermetricsutil--server-metrics) · [ServerHeartbeat](#serverheartbeat--liveness-heartbeat) · [ShutdownUtil](#shutdownutil--graceful-shutdown) · [TeleportUtil](#teleportutil--teleports) · [WebhookUtil](#webhookutil--json-webhooks)
 
 </details>
 
@@ -683,6 +689,14 @@ All available from the Server bundle (`Server.X`).
 - filterForBroadcast(text: string, fromUserId: number) -> (boolean, string|any)
 - filterForUser(text: string, fromUserId: number, toUserId: number) -> (boolean, string|any)
 - Example: `Server.ChatFilterUtil.filterForBroadcast("hi",player.UserId)`
+
+<a id="crossserverevent--cross-server-events"></a>
+### CrossServerEvent — cross-server events
+- new(prefix?: string) -> CSE
+- CSE:publish(eventName: string, data: any) -> (boolean, any)
+- CSE:subscribe(eventName: string, handler: (data:any)->()) -> { Disconnect: ()->() }
+- CSE:destroy()
+- Example: `local bus=Server.CrossServerEvent.new("uf"); bus:publish("Announce",{msg="hi"})`
 
 <a id="datastoreutil--datastore-helpers"></a>
 ### DataStoreUtil — DataStore helpers
@@ -789,11 +803,42 @@ All available from the Server bundle (`Server.X`).
 - isVoiceEnabled(player: Player) -> boolean?|nil
 - Example: `Server.PolicyUtil.isVoiceEnabled(player)`
 
+<a id="playerbanenforcer--auto-kick-banned"></a>
+### PlayerBanEnforcer — auto-kick banned
+- new() -> Enforcer
+- Enforcer:bind() -> ()->() — kick banned players on join using BanUtil.shouldKick
+- Example: `local e=Server.PlayerBanEnforcer.new(); e:bind()`
+
+<a id="playersessionutil--player-sessions"></a>
+### PlayerSessionUtil — player sessions
+- new() -> Tracker
+- Tracker:bind() -> ()->() — start tracking Players join/leave
+- Tracker:get(player: Player) -> { startedAt: number, lastSeen: number, durationSec: ()->number }?
+- Tracker:onStart((player: Player, session: table)->()) -> RBXScriptConnection
+- Tracker:onEnd((player: Player, session: table)->()) -> RBXScriptConnection
+- Tracker:destroy()
+- Example: `local t=Server.PlayerSessionUtil.new(); t:bind()`
+
 <a id="servermetricsutil--server-metrics"></a>
 ### ServerMetricsUtil — server metrics
 - snapshot() -> { serverTime: number, uptimeSec: number, players: number, jobId: string, placeId: number, private: boolean, memoryMB: number }
 - publishToTopic(topic: string) -> (ok: boolean, err?: string)
 - Example: `Server.ServerMetricsUtil.snapshot()`
+
+<a id="serverheartbeat--liveness-heartbeat"></a>
+### ServerHeartbeat — liveness heartbeat
+- new(name?: string, ttlSeconds?: number) -> HB
+- HB:start(intervalSeconds?: number)
+- HB:stop()
+- Example: `local hb=Server.ServerHeartbeat.new("uf:hb",60); hb:start(15)`
+
+<a id="shutdownutil--graceful-shutdown"></a>
+### ShutdownUtil — graceful shutdown
+- onShutdown(fn: ()->()) -> ()->() -- register callback for BindToClose
+- setTimeout(seconds: number) — max time to run callbacks in BindToClose
+- bind() — attach BindToClose once
+- initiate(reason?: string) — run callbacks now and kick players (does not close the server)
+- Example: `Server.ShutdownUtil.onShutdown(function() print("Saving...") end); Server.ShutdownUtil.bind()`
 
 <a id="teleportutil--teleports"></a>
 ### TeleportUtil — teleports
