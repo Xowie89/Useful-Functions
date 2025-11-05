@@ -378,6 +378,28 @@ runTest("AuditLogUtil (server)", function()
 	logger:start(); logger:stop()
 end)
 
+runTest("DistributedLockUtil (server)", function()
+	local ok, token = Modules.DistributedLockUtil.acquire("UF_TestLock", 2)
+	assert(ok and type(token) == "string")
+	local ok2, err = Modules.DistributedLockUtil.renew("UF_TestLock", token, 2)
+	assert(ok2, err)
+	local ok3 = select(1, Modules.DistributedLockUtil.release("UF_TestLock", token))
+	assert(ok3)
+end)
+
+runTest("GlobalRateLimiter (server)", function()
+	local grl = Modules.GlobalRateLimiter.new(2, 100)
+	local a = select(1, grl:allow("UF_TestKey"))
+	local b = select(1, grl:allow("UF_TestKey"))
+	local c = select(1, grl:allow("UF_TestKey"))
+	assert(a and b and not c)
+end)
+
+runTest("ServerMetricsUtil (server)", function()
+	local snap = Modules.ServerMetricsUtil.snapshot()
+	assert(type(snap) == "table" and snap.players ~= nil and snap.uptimeSec ~= nil)
+end)
+
 runTest("CharacterScaleUtil (server)", function()
 	assert(type(Modules.CharacterScaleUtil) == "table")
 	-- Create a dummy R15-like Humanoid; scaling values will be NumberValues on Humanoid

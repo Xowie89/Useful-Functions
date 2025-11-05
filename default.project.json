@@ -111,7 +111,10 @@
             "ChatFilterUtil": { "$path": "Modules/Server/ChatFilterUtil.lua" },
             "AccessControlUtil": { "$path": "Modules/Server/AccessControlUtil.lua" },
             "JobScheduler": { "$path": "Modules/Server/JobScheduler.lua" },
-            "AuditLogUtil": { "$path": "Modules/Server/AuditLogUtil.lua" }
+            "AuditLogUtil": { "$path": "Modules/Server/AuditLogUtil.lua" },
+            "DistributedLockUtil": { "$path": "Modules/Server/DistributedLockUtil.lua" },
+            "GlobalRateLimiter": { "$path": "Modules/Server/GlobalRateLimiter.lua" },
+            "ServerMetricsUtil": { "$path": "Modules/Server/ServerMetricsUtil.lua" }
             ,
             "CharacterScaleUtil": { "$path": "Modules/Server/CharacterScaleUtil.lua" },
             "CharacterMovementUtil": { "$path": "Modules/Server/CharacterMovementUtil.lua" },
