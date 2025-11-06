@@ -613,6 +613,8 @@ All available from the Server bundle (`Server.X`).
 
 <a id="accesscontrolutil--feature-gates"></a>
 ### AccessControlUtil — feature gates
+- canUseFeature(player: Player, rules: { allowUserIds?: {number}, denyUserIds?: {number}, group?: { id: number, minRank?: number }, gamePassId?: number, requireVoice?: boolean, forbidPaidRandomItems?: boolean }, deps?: { PolicyUtil?: any, GroupUtil?: any, MarketplaceUtil?: any }) -> (boolean, string?)
+- Example: `Server.AccessControlUtil.canUseFeature(player,{requireVoice=true})`
 <a id="allowlistutil--join-access"></a>
 ### AllowlistUtil — join access
 - new(opts?: { mode?: "open"|"allowlist"|"denylist", kickMessage?: string, storeName?: string, scope?: string, dryRun?: boolean }) -> Gate
@@ -623,8 +625,6 @@ All available from the Server bundle (`Server.X`).
 - Gate:bind() -> ()->() — auto-kick disallowed on join (no-op in dryRun)
 - Example: `local g=Server.AllowlistUtil.new({mode="allowlist"}); g:add(123); g:bind()`
 
-- canUseFeature(player: Player, rules: { allowUserIds?: {number}, denyUserIds?: {number}, group?: { id: number, minRank?: number }, gamePassId?: number, requireVoice?: boolean, forbidPaidRandomItems?: boolean }, deps?: { PolicyUtil?: any, GroupUtil?: any, MarketplaceUtil?: any }) -> (boolean, string?)
-- Example: `Server.AccessControlUtil.canUseFeature(player,{requireVoice=true})`
 
 <a id="auditlogutil--batched-logging"></a>
 ### AuditLogUtil — batched logging
@@ -791,6 +791,8 @@ All available from the Server bundle (`Server.X`).
 - Announcer:stop() — stop further reminders (best-effort)
 - Example: `local t=os.time()+300; local a=Server.MaintenanceAnnouncer.new(t,{kickAtEnd=false}); a:start()`
 
+See also: [Maintenance playbook](README.md#maintenance-playbook) in the README for a 5-line wiring example.
+
 <a id="marketplaceutil--purchases"></a>
 ### MarketplaceUtil — purchases
 - ownsGamePass(player: Player, gamePassId: number) -> (boolean, boolean|any)
@@ -813,6 +815,8 @@ All available from the Server bundle (`Server.X`).
 - MM:onMatched(cb: ({Player})->()) -> RBXScriptConnection
 - MM:onTimeout(cb: (Player)->()) -> RBXScriptConnection
 - Example: `local mm=Server.MatchmakingUtil.new(game.PlaceId,2,{constraints={groupBy="region",requireRoles={Tank=1,Healer=1}}, priorityAgingPerSecond=0.01}); mm:enqueue(player,{role="Tank",region="NA"})`
+
+Tip: For public routing, use `Server.ServerSelector.makePublicServerSelector({...})` to build a default selector that picks a public server by load.
 
 <a id="memorystoreutil--queuesmaps"></a>
 ### MemoryStoreUtil — queues/maps

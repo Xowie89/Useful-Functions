@@ -123,6 +123,7 @@
             "LockdownUtil": { "$path": "Modules/Server/LockdownUtil.lua" },
             "PlayerProfileUtil": { "$path": "Modules/Server/PlayerProfileUtil.lua" },
             "AllowlistUtil": { "$path": "Modules/Server/AllowlistUtil.lua" },
+            "ServerSelector": { "$path": "Modules/Server/ServerSelector.lua" },
             "CharacterScaleUtil": { "$path": "Modules/Server/CharacterScaleUtil.lua" },
             "CharacterMovementUtil": { "$path": "Modules/Server/CharacterMovementUtil.lua" },
             "CharacterAppearanceUtil": { "$path": "Modules/Server/CharacterAppearanceUtil.lua" },
