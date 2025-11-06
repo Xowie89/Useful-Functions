@@ -309,6 +309,96 @@ runTest("MatchmakingUtil (server)", function()
 	assert(mm ~= nil)
 end)
 
+runTest("MatchmakingUtil priority (server)", function()
+	local mm = Modules.MatchmakingUtil.new(0, 2, { retries = 0, dryRun = true, pollSeconds = 0.01 })
+	local got
+	mm:onMatched(function(players) got = players end)
+	local A = { Name = "A" }
+	local B = { Name = "B" }
+	local C = { Name = "C" }
+	mm:enqueue(A, { priority = 0 })
+	mm:enqueue(B, { priority = 10 })
+	mm:enqueue(C, { priority = 0 })
+	mm:flush()
+	assert(got and #got == 2 and (got[1] == B or got[2] == B))
+end)
+
+runTest("MatchmakingUtil groupBy region (server)", function()
+	local mm = Modules.MatchmakingUtil.new(0, 2, { retries = 0, dryRun = true, pollSeconds = 0.01, constraints = { groupBy = "region" } })
+	local got
+	mm:onMatched(function(players) got = players end)
+	local NA1 = { Name = "NA1" }
+	local EU1 = { Name = "EU1" }
+	local NA2 = { Name = "NA2" }
+	mm:enqueue(NA1, { region = "NA" })
+	mm:enqueue(EU1, { region = "EU" })
+	mm:enqueue(NA2, { region = "NA" })
+	mm:flush()
+	assert(got and #got == 2)
+end)
+
+runTest("MatchmakingUtil requireRoles (server)", function()
+	local mm = Modules.MatchmakingUtil.new(0, 2, { retries = 0, dryRun = true, pollSeconds = 0.01, constraints = { requireRoles = { Tank = 1, Healer = 1 } } })
+	local got
+	mm:onMatched(function(players) got = players end)
+	local Tank = { Name = "Tank" }
+	local Healer = { Name = "Healer" }
+	local DPS = { Name = "DPS" }
+	mm:enqueue(DPS, { role = "DPS" })
+	mm:enqueue(Tank, { role = "Tank" })
+	mm:enqueue(Healer, { role = "Healer" })
+	mm:flush()
+	assert(got and #got == 2)
+end)
+
+runTest("MatchmakingUtil timeout (server)", function()
+	local mm = Modules.MatchmakingUtil.new(0, 2, { retries = 0, dryRun = true, pollSeconds = 0.01 })
+	local to = 0
+	mm:onTimeout(function(_) to += 1 end)
+	local P = { Name = "TimeoutPlayer" }
+	mm:enqueue(P, { timeoutSec = 0.01 })
+	task.wait(0.05)
+	assert(to == 1 and mm:size() == 0)
+end)
+
+runTest("LockdownUtil (server)", function()
+	local l = Modules.LockdownUtil.new({ dryRun = true })
+	local unbind = l:bind()
+	assert(type(unbind) == "function")
+	local fake = { UserId = 1001, Name = "User" }
+	-- Initially open
+	assert(l:isAllowed(fake) == true)
+	l:enable("Test")
+	assert(l:isEnabled() == true)
+	assert(l:isAllowed(fake) == false)
+	l:allow(1001)
+	assert(l:isAllowed(fake) == true)
+	l:disable()
+	assert(l:isEnabled() == false)
+	assert(l:isAllowed(fake) == true)
+	unbind()
+end)
+
+runTest("MatchmakingUtil public routing (server)", function()
+	local called = false
+	local mm = Modules.MatchmakingUtil.new(0, 2, {
+		retries = 0,
+		dryRun = true,
+		pollSeconds = 0.01,
+		teleportStrategy = "public",
+		serverSelector = function(players)
+			called = true
+			return "job-abc"
+		end
+	})
+	local A = { Name = "A" }
+	local B = { Name = "B" }
+	mm:enqueue(A)
+	mm:enqueue(B)
+	mm:flush()
+	assert(called == true)
+end)
+
 runTest("MessagingServiceUtil (server)", function()
 	assert(type(Modules.MessagingServiceUtil) == "table")
 	assert(type(Modules.MessagingServiceUtil.publish) == "function")
@@ -362,6 +452,15 @@ runTest("AccessControlUtil (server)", function()
 	assert(type(Modules.AccessControlUtil) == "table")
 	local ok = Modules.AccessControlUtil.canUseFeature
 	assert(type(ok) == "function")
+end)
+
+runTest("AllowlistUtil (server)", function()
+	local g = Modules.AllowlistUtil.new({ mode = "allowlist", dryRun = true })
+	g:add(123)
+	local fake = { UserId = 123, Name = "A" }
+	assert(g:isAllowed(fake) == true)
+	g:remove(123)
+	assert(g:isAllowed(fake) == false)
 end)
 
 runTest("JobScheduler (server)", function()
@@ -429,11 +528,36 @@ runTest("PlayerBanEnforcer (server)", function()
 	unbind()
 end)
 
+runTest("PlayerProfileUtil (server)", function()
+	local prof = Modules.PlayerProfileUtil.new("UF_TestProfiles", { Coins = 0 }, { dryRun = true })
+	assert(prof and prof.bind and prof.get and prof.save)
+	local unbind = prof:bind()
+	-- simulate player lifecycle
+	local fake = { UserId = 999, Name = "Fake" }
+	-- internal methods are not exposed; we can at least ensure bind returns and get returns nil for non-tracked in dryRun until a real Player joins
+	assert(type(unbind) == "function")
+	unbind()
+	prof:destroy()
+end)
+
 runTest("ServerHeartbeat (server)", function()
 	local hb = Modules.ServerHeartbeat.new("UF_TestHB", 30)
 	hb:start(5)
 	task.wait(0.02)
 	hb:stop()
+end)
+
+runTest("ServerRegistry (server)", function()
+	local reg = Modules.ServerRegistry.new("UF_TestHB")
+	local list = reg:listActive(5, 10)
+	assert(type(list) == "table")
+end)
+
+runTest("MaintenanceAnnouncer (server)", function()
+	local t = os.time() + 2
+	local a = Modules.MaintenanceAnnouncer.new(t, { kickAtEnd = false, reminders = { 1 } })
+	assert(a and a.start and a.stop and a.announce)
+	a:start()
 end)
 
 runTest("CharacterScaleUtil (server)", function()

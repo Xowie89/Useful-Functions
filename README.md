@@ -6,7 +6,7 @@ Lightweight, reusable utilities for Roblox projects. Shared, Client, and Server 
 
 This repo is a grab‑bag of production‑ready Luau utilities: signals, timers, math/geometry, UI helpers, data helpers, and server services (teleport, datastores, messaging, matchmaking, etc.).
 
-For a complete API index (all modules and functions), see API.md.
+For a complete API index (all modules and functions), see [API.md](API.md).
 
 ## Setup
 
@@ -45,6 +45,18 @@ local Server = require(ServerScriptService.UsefulFunctions.UsefulFunctionsServer
 ## API Reference
 
 See API.md for a compact list of every module with its functions and usage notes.
+
+## Maintenance playbook
+
+Tiny, 5‑line wiring for scheduled maintenance (announce, lockdown, then kick at time):
+
+```lua
+local Server = require(game:GetService("ServerScriptService").UsefulFunctions.UsefulFunctionsServer)
+local t = os.time() + 600 -- maintenance starts in 10 minutes
+local lock = Server.LockdownUtil.new({ storeName = "UF_Gates" }); lock:bind(); lock:enable("Scheduled maintenance")
+Server.ShutdownUtil.bind() -- ensure on-shutdown callbacks run
+Server.MaintenanceAnnouncer.new(t):start() -- kickAtEnd=true by default
+```
 
 ## Tests
 

@@ -76,6 +76,7 @@ Tip: In Studio, individual modules are also mapped under ReplicatedStorage/Serve
 	- [ViewportUtil](#viewportutil--viewportframe-helpers)
 - [Server modules](#server-modules)
 	- [AccessControlUtil](#accesscontrolutil--feature-gates)
+	- [AllowlistUtil](#allowlistutil--join-access)
 	- [AuditLogUtil](#auditlogutil--batched-logging)
 	- [BadgeUtil](#badgeutil--badges)
 	- [BanUtil](#banutil--bans)
@@ -93,15 +94,19 @@ Tip: In Studio, individual modules are also mapped under ReplicatedStorage/Serve
 	- [HttpUtil](#httputil--http-requests)
 	- [JobScheduler](#jobscheduler--background-jobs)
 	- [LeaderstatsUtil](#leaderstatsutil--leaderstats)
+	- [LockdownUtil](#lockdownutil--server-lockdown)
 	- [MarketplaceUtil](#marketplaceutil--purchases)
 	- [MatchmakingUtil](#matchmakingutil--queueparty-matching)
+	- [MaintenanceAnnouncer](#maintenanceannouncer--scheduled-maintenance)
 	- [MemoryStoreUtil](#memorystoreutil--queuesmaps)
 	- [MessagingServiceUtil](#messagingserviceutil--pubsub)
 	- [PlayerBanEnforcer](#playerbanenforcer--auto-kick-banned)
+	- [PlayerProfileUtil](#playerprofileutil--player-profiles)
 	- [PlayerSessionUtil](#playersessionutil--player-sessions)
 	- [PolicyUtil](#policyutil--policy-checks)
-	- [ServerMetricsUtil](#servermetricsutil--server-metrics)
 	- [ServerHeartbeat](#serverheartbeat--liveness-heartbeat)
+	- [ServerMetricsUtil](#servermetricsutil--server-metrics)
+	- [ServerRegistry](#serverregistry--list-active-servers)
 	- [ShutdownUtil](#shutdownutil--graceful-shutdown)
 	- [TeleportUtil](#teleportutil--teleports)
 	- [WebhookUtil](#webhookutil--json-webhooks)
@@ -602,13 +607,22 @@ All available from the Server bundle (`Server.X`).
 <details open>
 <summary>Quick index</summary>
 
-[AccessControlUtil](#accesscontrolutil--feature-gates) · [AuditLogUtil](#auditlogutil--batched-logging) · [BadgeUtil](#badgeutil--badges) · [BanUtil](#banutil--bans) · [CharacterAppearanceUtil](#characterappearanceutil--outfitscolorsaccessories) · [CharacterHealthUtil](#characterhealthutil--healthinvulnerability) · [CharacterMovementUtil](#charactermovementutil--movement-properties) · [CharacterScaleUtil](#characterscaleutil--r15-scaling) · [CharacterVisibilityUtil](#charactervisibilityutil--transparencyghost) · [ChatFilterUtil](#chatfilterutil--text-filter) · [CrossServerEvent](#crossserverevent--cross-server-events) · [DataStoreUtil](#datastoreutil--datastore-helpers) · [DistributedLockUtil](#distributedlockutil--distributed-locks) · [GlobalRateLimiter](#globalratelimiter--distributed-token-bucket) · [GroupUtil](#grouputil--group-info) · [HttpUtil](#httputil--http-requests) · [JobScheduler](#jobscheduler--background-jobs) · [LeaderstatsUtil](#leaderstatsutil--leaderstats) · [MarketplaceUtil](#marketplaceutil--purchases) · [MatchmakingUtil](#matchmakingutil--queueparty-matching) · [MemoryStoreUtil](#memorystoreutil--queuesmaps) · [MessagingServiceUtil](#messagingserviceutil--pubsub) · [PlayerSessionUtil](#playersessionutil--player-sessions) · [PolicyUtil](#policyutil--policy-checks) · [ServerMetricsUtil](#servermetricsutil--server-metrics) · [ShutdownUtil](#shutdownutil--graceful-shutdown) · [TeleportUtil](#teleportutil--teleports) · [WebhookUtil](#webhookutil--json-webhooks)
- [AccessControlUtil](#accesscontrolutil--feature-gates) · [AuditLogUtil](#auditlogutil--batched-logging) · [BadgeUtil](#badgeutil--badges) · [BanUtil](#banutil--bans) · [CharacterAppearanceUtil](#characterappearanceutil--outfitscolorsaccessories) · [CharacterHealthUtil](#characterhealthutil--healthinvulnerability) · [CharacterMovementUtil](#charactermovementutil--movement-properties) · [CharacterScaleUtil](#characterscaleutil--r15-scaling) · [CharacterVisibilityUtil](#charactervisibilityutil--transparencyghost) · [ChatFilterUtil](#chatfilterutil--text-filter) · [CrossServerEvent](#crossserverevent--cross-server-events) · [DataStoreUtil](#datastoreutil--datastore-helpers) · [DistributedLockUtil](#distributedlockutil--distributed-locks) · [GlobalRateLimiter](#globalratelimiter--distributed-token-bucket) · [GroupUtil](#grouputil--group-info) · [HttpUtil](#httputil--http-requests) · [JobScheduler](#jobscheduler--background-jobs) · [LeaderstatsUtil](#leaderstatsutil--leaderstats) · [MarketplaceUtil](#marketplaceutil--purchases) · [MatchmakingUtil](#matchmakingutil--queueparty-matching) · [MemoryStoreUtil](#memorystoreutil--queuesmaps) · [MessagingServiceUtil](#messagingserviceutil--pubsub) · [PlayerBanEnforcer](#playerbanenforcer--auto-kick-banned) · [PlayerSessionUtil](#playersessionutil--player-sessions) · [PolicyUtil](#policyutil--policy-checks) · [ServerMetricsUtil](#servermetricsutil--server-metrics) · [ServerHeartbeat](#serverheartbeat--liveness-heartbeat) · [ShutdownUtil](#shutdownutil--graceful-shutdown) · [TeleportUtil](#teleportutil--teleports) · [WebhookUtil](#webhookutil--json-webhooks)
+[AccessControlUtil](#accesscontrolutil--feature-gates) · [AllowlistUtil](#allowlistutil--join-access) · [AuditLogUtil](#auditlogutil--batched-logging) · [BadgeUtil](#badgeutil--badges) · [BanUtil](#banutil--bans) · [CharacterAppearanceUtil](#characterappearanceutil--outfitscolorsaccessories) · [CharacterHealthUtil](#characterhealthutil--healthinvulnerability) · [CharacterMovementUtil](#charactermovementutil--movement-properties) · [CharacterScaleUtil](#characterscaleutil--r15-scaling) · [CharacterVisibilityUtil](#charactervisibilityutil--transparencyghost) · [ChatFilterUtil](#chatfilterutil--text-filter) · [CrossServerEvent](#crossserverevent--cross-server-events) · [DataStoreUtil](#datastoreutil--datastore-helpers) · [DistributedLockUtil](#distributedlockutil--distributed-locks) · [GlobalRateLimiter](#globalratelimiter--distributed-token-bucket) · [GroupUtil](#grouputil--group-info) · [HttpUtil](#httputil--http-requests) · [JobScheduler](#jobscheduler--background-jobs) · [LeaderstatsUtil](#leaderstatsutil--leaderstats) · [LockdownUtil](#lockdownutil--server-lockdown) · [MaintenanceAnnouncer](#maintenanceannouncer--scheduled-maintenance) · [MarketplaceUtil](#marketplaceutil--purchases) · [MatchmakingUtil](#matchmakingutil--queueparty-matching) · [MemoryStoreUtil](#memorystoreutil--queuesmaps) · [MessagingServiceUtil](#messagingserviceutil--pubsub) · [PlayerBanEnforcer](#playerbanenforcer--auto-kick-banned) · [PlayerProfileUtil](#playerprofileutil--player-profiles) · [PlayerSessionUtil](#playersessionutil--player-sessions) · [PolicyUtil](#policyutil--policy-checks) · [ServerHeartbeat](#serverheartbeat--liveness-heartbeat) · [ServerMetricsUtil](#servermetricsutil--server-metrics) · [ServerRegistry](#serverregistry--list-active-servers) · [ShutdownUtil](#shutdownutil--graceful-shutdown) · [TeleportUtil](#teleportutil--teleports) · [WebhookUtil](#webhookutil--json-webhooks)
 
 </details>
 
 <a id="accesscontrolutil--feature-gates"></a>
 ### AccessControlUtil — feature gates
+<a id="allowlistutil--join-access"></a>
+### AllowlistUtil — join access
+- new(opts?: { mode?: "open"|"allowlist"|"denylist", kickMessage?: string, storeName?: string, scope?: string, dryRun?: boolean }) -> Gate
+- Gate:setMode(mode: string)
+- Gate:add(userId: number); Gate:remove(userId: number)
+- Gate:deny(userId: number); Gate:undeny(userId: number)
+- Gate:isAllowed(player: Player) -> boolean
+- Gate:bind() -> ()->() — auto-kick disallowed on join (no-op in dryRun)
+- Example: `local g=Server.AllowlistUtil.new({mode="allowlist"}); g:add(123); g:bind()`
+
 - canUseFeature(player: Player, rules: { allowUserIds?: {number}, denyUserIds?: {number}, group?: { id: number, minRank?: number }, gamePassId?: number, requireVoice?: boolean, forbidPaidRandomItems?: boolean }, deps?: { PolicyUtil?: any, GroupUtil?: any, MarketplaceUtil?: any }) -> (boolean, string?)
 - Example: `Server.AccessControlUtil.canUseFeature(player,{requireVoice=true})`
 
@@ -749,6 +763,14 @@ All available from the Server bundle (`Server.X`).
 
 <a id="leaderstatsutil--leaderstats"></a>
 ### LeaderstatsUtil — leaderstats
+<a id="lockdownutil--server-lockdown"></a>
+### LockdownUtil — server lockdown
+- new(opts?: { topic?: string, kickMessage?: string, storeName?: string, scope?: string, dryRun?: boolean }) -> Lockdown
+- Lockdown:bind() -> ()->() — auto-kick (delegates to AllowlistUtil)
+- Lockdown:enable(reason?: string); Lockdown:disable(); Lockdown:isEnabled() -> boolean
+- Lockdown:allow(userId: number); Lockdown:deny(userId: number); Lockdown:isAllowed(player: Player) -> boolean
+- Example: `local l=Server.LockdownUtil.new({storeName="UF_Gates"}); l:bind(); l:enable("Maintenance")`
+
 - addNumber(player: Player, name: string, initial?: number) -> NumberValue
 - addInt(player: Player, name: string, initial?: number) -> IntValue
 - addString(player: Player, name: string, initial?: string) -> StringValue
@@ -761,6 +783,14 @@ All available from the Server bundle (`Server.X`).
 - attachPersistence(store: GlobalDataStore, keyFn: (player: Player)->string) -> { load: (Player)->(boolean, string?), save: (Player)->(boolean, string?) }
 - Example: `Server.LeaderstatsUtil.addInt(player,"Coins",0)`
 
+<a id="maintenanceannouncer--scheduled-maintenance"></a>
+### MaintenanceAnnouncer — scheduled maintenance
+- new(maintenanceUnix: number, opts?: { topic?: string, reminders?: {number}, kickAtEnd?: boolean }) -> Announcer
+- Announcer:announce(text: string) — broadcast immediately via MessagingService topic
+- Announcer:start() — schedule reminders and final action
+- Announcer:stop() — stop further reminders (best-effort)
+- Example: `local t=os.time()+300; local a=Server.MaintenanceAnnouncer.new(t,{kickAtEnd=false}); a:start()`
+
 <a id="marketplaceutil--purchases"></a>
 ### MarketplaceUtil — purchases
 - ownsGamePass(player: Player, gamePassId: number) -> (boolean, boolean|any)
@@ -772,10 +802,17 @@ All available from the Server bundle (`Server.X`).
 
 <a id="matchmakingutil--queueparty-matching"></a>
 ### MatchmakingUtil — queue/party matching
-- new(placeId: number, partySize: number, opts?: { retries?: number, backoff?: number, pollSeconds?: number }) -> MM
+- new(placeId: number, partySize: number, opts?: {
+		retries?: number, backoff?: number, pollSeconds?: number,
+		priorityAgingPerSecond?: number, dryRun?: boolean,
+		teleportStrategy?: "private"|"public", serverSelector?: (({Player})->(string?)),
+		constraints?: { groupBy?: string|((entry)->any), requireRoles?: { [string]: number }, predicate?: (entry)->boolean, compatibility?: (a,b)->boolean }
+	}) -> MM
+- MM:enqueue(player: Player, opts?: { priority?: number, role?: string, region?: string, timeoutSec?: number, meta?: table })
+- MM:dequeue(player: Player); MM:size() -> number; MM:flush(); MM:destroy()
 - MM:onMatched(cb: ({Player})->()) -> RBXScriptConnection
-- MM:enqueue(player: Player); MM:dequeue(player: Player); MM:size() -> number; MM:flush(); MM:destroy()
-- Example: `Server.MatchmakingUtil.new(game.PlaceId,2):enqueue(player)`
+- MM:onTimeout(cb: (Player)->()) -> RBXScriptConnection
+- Example: `local mm=Server.MatchmakingUtil.new(game.PlaceId,2,{constraints={groupBy="region",requireRoles={Tank=1,Healer=1}}, priorityAgingPerSecond=0.01}); mm:enqueue(player,{role="Tank",region="NA"})`
 
 <a id="memorystoreutil--queuesmaps"></a>
 ### MemoryStoreUtil — queues/maps
@@ -811,6 +848,16 @@ All available from the Server bundle (`Server.X`).
 
 <a id="playersessionutil--player-sessions"></a>
 ### PlayerSessionUtil — player sessions
+<a id="playerprofileutil--player-profiles"></a>
+### PlayerProfileUtil — player profiles
+- new(storeName: string, template: table, opts?: { lockTtl?: number, saveOnLeave?: boolean, dryRun?: boolean, keyFn?: (Player)->string }) -> Profiles
+- Profiles:onLoaded((player: Player, data: table)->()) -> RBXScriptConnection
+- Profiles:onSaving((player: Player, data: table)->()) -> RBXScriptConnection
+- Profiles:onReleased((player: Player, data: table)->()) -> RBXScriptConnection
+- Profiles:bind() -> ()->() — acquire on join, release on leave
+- Profiles:get(player: Player) -> table?; Profiles:save(player: Player) -> (boolean, string?)
+- Example: `local p=Server.PlayerProfileUtil.new("UF_Profiles",{Coins=0},{lockTtl=30}); p:bind()`
+
 - new() -> Tracker
 - Tracker:bind() -> ()->() — start tracking Players join/leave
 - Tracker:get(player: Player) -> { startedAt: number, lastSeen: number, durationSec: ()->number }?
@@ -831,6 +878,12 @@ All available from the Server bundle (`Server.X`).
 - HB:start(intervalSeconds?: number)
 - HB:stop()
 - Example: `local hb=Server.ServerHeartbeat.new("uf:hb",60); hb:start(15)`
+
+<a id="serverregistry--list-active-servers"></a>
+### ServerRegistry — list active servers
+- new(name?: string) -> Registry
+- Registry:listActive(maxAgeSec?: number, limit?: number) -> { { jobId: string, placeId: number, ts: number, players: number, private: boolean } }
+- Example: `local r=Server.ServerRegistry.new("uf:hb"); local list=r:listActive(120,50)`
 
 <a id="shutdownutil--graceful-shutdown"></a>
 ### ShutdownUtil — graceful shutdown

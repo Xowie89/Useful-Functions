@@ -17,6 +17,7 @@ function PlayerSessionUtil.new()
 	self._conns = {}
 	self._onStart = Instance.new("BindableEvent")
 	self._onEnd = Instance.new("BindableEvent")
+	self._persistence = nil -- { store: DataStore, keyFn: (Player)->string }
 	return self
 end
 
@@ -89,6 +90,30 @@ function PlayerSessionUtil:destroy()
 	end
 	self._onStart:Destroy()
 	self._onEnd:Destroy()
+end
+
+-- Attach persistence: on session end, accumulate counters in the provided DataStore.
+-- The DataStore should accept UpdateAsync(key, fn).
+function PlayerSessionUtil:attachPersistence(store, keyFn)
+	assert(store and typeof(store.UpdateAsync) == "function", "attachPersistence expects a DataStore-like with UpdateAsync")
+	self._persistence = {
+		store = store,
+		keyFn = keyFn or function(player) return ("session:%d"):format(player.UserId) end,
+	}
+	-- Hook onEnd to persist summary
+	self:onEnd(function(player, session)
+		local key = self._persistence.keyFn(player)
+		local duration = math.max(0, (session.lastSeen or session.startedAt) - session.startedAt)
+		pcall(function()
+			self._persistence.store:UpdateAsync(key, function(old)
+				old = old or { count = 0, totalSeconds = 0, lastEndedAt = 0 }
+				old.count += 1
+				old.totalSeconds += duration
+				old.lastEndedAt = os.time()
+				return old
+			end)
+		end)
+	end)
 end
 
 return PlayerSessionUtil

@@ -21,6 +21,7 @@ function ServerHeartbeat.new(name, ttlSeconds)
     self._running = false
     self._thread = nil
     self._map = MemoryStoreService:GetMap(self._name)
+    self._sorted = MemoryStoreService:GetSortedMap(self._name..":idx")
     return self
 end
 
@@ -35,6 +36,7 @@ function ServerHeartbeat:_beat()
     local key = tostring(jobId())
     local ok, err = pcall(function()
         self._map:SetAsync(key, payload, self._ttl)
+        self._sorted:SetAsync(key, payload.ts, self._ttl)
     end)
     if not ok then
         warn("ServerHeartbeat SetAsync failed:", err)
